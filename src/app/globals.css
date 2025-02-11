@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  height: 100%;
+  min-height: 100vh;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-y: overlay;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(25, 42, 83, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(25, 42, 83, 0.3);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: none;  /* Hide in Firefox */
+  scrollbar-color: transparent transparent;
+}
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 24 91% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 221 83% 53%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply text-foreground;
+  }
+}
+
+/* Progress bar styles */
+.progress-bar {
+  background: #192A53;
+}
+
+.progress-bar-background {
+  background: #FEE7E7;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white rounded-lg shadow-sm;
+  border: 1px solid #E2E8F0;
+}
+
+/* Main content background */
+.main-gradient {
+  background: linear-gradient(180deg, #374365 0%, #7E879C 100%) !important;
+}
+
+/* Status badges */
+.status-badge {
+  @apply px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.status-badge-blue {
+  @apply bg-blue-50 text-blue-600;
+}
+
+/* Chart colors */
+.donut-chart {
+  --chart-primary: #192A53;
+  --chart-background: #FEE7E7;
+}
+
+.sidebar-expanded {
+  margin-left: 240px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-collapsed .sidebar-expanded {
+  margin-left: 64px;
+}
+
+/* Header styles */
+header {
+  transition: left 0.3s ease;
+}
+
+.sidebar-expanded header {
+  left: 240px;
+}
+
+.sidebar-collapsed .sidebar-expanded header {
+  left: 64px;
+}
