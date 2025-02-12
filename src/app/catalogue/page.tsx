@@ -139,35 +139,35 @@ const tasks: Task[] = [
 
 export default function TaskCataloguePage() {
   return (
-    <div className="h-[calc(100vh-56px)] bg-gradient-to-b from-[#374365] to-[#7E879C] flex flex-col">
+    <div className="h-[calc(100vh-3.5rem)] bg-gradient-to-b from-[#374365] to-[#7E879C] flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="shrink-0 px-6 pt-3 pb-2">
+      <div className="px-4 xl:px-6 pt-3 xl:pt-4 pb-2 xl:pb-3">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Task Catalogue</h1>
-            <p className="text-sm text-white/60 mt-0.5">Browse and request pre-configured support tasks.</p>
+            <h1 className="text-xl xl:text-2xl font-semibold text-white">Task Catalogue</h1>
+            <p className="text-xs xl:text-sm text-white/60 mt-0.5 xl:mt-1">Browse and request pre-configured support tasks.</p>
           </div>
           <SupportHoursKPI />
         </div>
       </div>
       
       {/* Main Content */}
-      <div className="h-[600px] px-6">
+      <div className="px-4 xl:px-6 flex-1 min-h-0 overflow-y-auto pb-4">
         <TaskGrid tasks={tasks.slice(0, 12)} />
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 px-6 py-2 mt-auto border-t border-white/10">
+      <div className="shrink-0 px-4 xl:px-6 py-2 mt-auto border-t border-white/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <button className="px-3 py-1 text-sm text-white bg-white/10 rounded hover:bg-white/20 transition-colors">
+            <button className="px-2 xl:px-3 py-1 text-xs xl:text-sm text-white bg-white/10 rounded hover:bg-white/20 transition-colors">
               Previous
             </button>
-            <button className="px-3 py-1 text-sm text-white bg-white/10 rounded hover:bg-white/20 transition-colors">
+            <button className="px-2 xl:px-3 py-1 text-xs xl:text-sm text-white bg-white/10 rounded hover:bg-white/20 transition-colors">
               Next
             </button>
           </div>
-          <p className="text-sm text-white/60">
+          <p className="text-xs xl:text-sm text-white/60">
             Showing <span className="font-medium text-white">1-12</span> of <span className="font-medium text-white">{tasks.length}</span> tasks
           </p>
         </div>

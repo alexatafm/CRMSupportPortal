@@ -105,30 +105,30 @@ function TicketCard({ ticket }: { ticket: Ticket }) {
   return (
     <>
       <Card 
-        className="mb-3 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow bg-white cursor-pointer" 
+        className="mb-2 xl:mb-3 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow bg-white cursor-pointer" 
         onClick={() => setIsModalOpen(true)}
       >
-        <CardContent className="p-4">
-          <div className="flex flex-col h-[100px]">
+        <CardContent className="p-2 xl:p-3">
+          <div className="flex flex-col h-[80px] xl:h-[90px]">
             <div className="flex justify-between">
-              <div className="flex-1 mr-4">
-                <h4 className="text-[15px] font-semibold text-[#42526E] mb-1">{ticket.title}</h4>
-                <p className="text-[13px] text-[#6B778C] line-clamp-2 mb-2">{ticket.description || ticket.title}</p>
+              <div className="flex-1 mr-3">
+                <h4 className="text-xs xl:text-sm font-semibold text-[#42526E] mb-0.5 xl:mb-1">{ticket.title}</h4>
+                <p className="text-[11px] xl:text-xs text-[#6B778C] line-clamp-2 mb-1 xl:mb-2">{ticket.description || ticket.title}</p>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-xs text-[#0052CC] bg-[#DEEBFF] px-2.5 py-0.5 rounded-full font-medium mb-3">
+                <span className="text-[10px] xl:text-xs text-[#0052CC] bg-[#DEEBFF] px-2 py-0.5 rounded-full font-medium mb-2">
                   {ticket.status}
                 </span>
-                <div className="flex flex-col items-end space-y-2 text-[12px] text-[#6B778C]">
-                  <div className="flex items-center gap-1.5">
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                <div className="flex flex-col items-end space-y-1 text-[10px] xl:text-[11px] text-[#6B778C]">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
                       <path d="M3 10h18M16 2v4M8 2v4" stroke="currentColor" strokeWidth="2"/>
                     </svg>
                     <span>{ticket.date}</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
                       <path d="M12 6v6l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                     </svg>
@@ -137,16 +137,16 @@ function TicketCard({ ticket }: { ticket: Ticket }) {
                 </div>
               </div>
             </div>
-            <div className="mt-auto flex justify-between items-end text-[12px] text-[#6B778C]">
-              <div className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+            <div className="mt-auto flex justify-between items-end text-[10px] xl:text-[11px] text-[#6B778C]">
+              <div className="flex items-center gap-1">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
                   <path d="M12 8v4l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
                 </svg>
                 <span>Scoped Hours: {ticket.scopedHours}</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+              <div className="flex items-center gap-1">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="2"/>
                   <path d="M5 18c0-1.657 3.134-3 7-3s7 1.343 7 3" stroke="currentColor" strokeWidth="2"/>
                 </svg>

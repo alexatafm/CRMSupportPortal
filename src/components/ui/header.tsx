@@ -62,7 +62,7 @@ export function Header({ className, ...props }: HeaderProps) {
   const config = getPageConfig(pathname)
 
   return (
-    <header className={cn("flex h-14 items-center justify-between px-14 bg-header text-white", className)} {...props}>
+    <header className={cn("flex h-14 items-center justify-between px-6 bg-header text-white", className)} {...props}>
       <h1 className="text-lg font-semibold">
         <span className="opacity-70">CRM Support Portal</span>
         <span className="mx-2 opacity-50">/</span>

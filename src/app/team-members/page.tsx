@@ -34,16 +34,7 @@ export default function TeamMembersPage() {
 
   return (
     <div className="h-[calc(100vh-3.5rem)] bg-gradient-to-b from-[#374365] to-[#7E879C] flex flex-col overflow-hidden">
-      <div className="px-6 pt-4 pb-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-white">Team Members</h1>
-            <p className="text-sm text-white/60 mt-1">Manage your team's access and permissions.</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-6 flex-1 min-h-0">
+      <div className="px-4 xl:px-6 flex-1 min-h-0 overflow-y-auto py-4">
         <UserTable onEdit={setSelectedUser} />
       </div>
 

@@ -37,38 +37,47 @@ export function SupportHoursKPI() {
     }
   ]
 
+  // Calculate days remaining until reset
+  const resetDate = new Date('2025-02-23')
+  const today = new Date()
+  const daysRemaining = Math.ceil((resetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+
   return (
-    <div className="flex items-center gap-10 bg-white/5 rounded-lg px-8 py-2 border border-white/10">
-      {roles.map((role) => {
-        const percentage = Math.round((role.hoursUsed / role.totalHours) * 100)
-        const hoursRemaining = role.totalHours - role.hoursUsed
-        return (
-          <div key={role.name} className="flex items-center gap-3">
-            {role.icon}
-            <div className="flex flex-col min-w-[300px]">
-              <div className="flex items-start justify-between">
-                <div className="flex-1 mr-4">
-                  <p className="text-sm text-white/80 truncate" title={role.name}>{role.name}</p>
-                  <div className="h-1.5 w-full bg-white/10 rounded-full mt-1.5">
-                    <div 
-                      className="h-full bg-white rounded-full transition-all duration-300"
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-sm font-medium text-white whitespace-nowrap">{hoursRemaining}h left</span>
-                  <span className="text-xs text-white/60 whitespace-nowrap">of {role.totalHours}h total</span>
-                </div>
+    <div className="flex items-center gap-8 bg-white/5 rounded-lg px-6 py-2.5 border border-white/10">
+      {roles.map((role, index) => (
+        <div key={role.name} className="flex items-center">
+          <div className="flex flex-col w-[160px]">
+            <div className="flex items-start gap-2 mb-2.5">
+              <div className="shrink-0 mt-0.5">
+                {role.icon}
               </div>
+              <p className="text-sm text-white/80 leading-tight w-[128px] line-clamp-2" title={role.name}>
+                {role.name}
+              </p>
+            </div>
+            
+            <div className="h-1.5 w-full bg-white/10 rounded-full mb-1.5">
+              <div 
+                className="h-full bg-white rounded-full transition-all duration-300"
+                style={{ width: `${Math.round((role.hoursUsed / role.totalHours) * 100)}%` }}
+              />
+            </div>
+
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-medium text-white">{role.totalHours - role.hoursUsed}h left</span>
+              <span className="text-white/60">of {role.totalHours}h total</span>
             </div>
           </div>
-        )
-      })}
-      <div className="h-8 w-px bg-white/10" />
-      <div>
+          {index < roles.length - 1 && (
+            <div className="h-16 w-px bg-white/10 mx-8" />
+          )}
+        </div>
+      ))}
+      <div className="h-16 w-px bg-white/10" />
+      <div className="min-w-[100px]">
         <p className="text-xs text-white/60">Next Reset</p>
-        <p className="text-sm font-medium text-white">23 Feb 2024</p>
+        <p className="text-sm font-medium text-white">23 Feb 2025</p>
+        <p className="text-xs text-white/60 mt-0.5">{daysRemaining} days remaining</p>
       </div>
     </div>
   )

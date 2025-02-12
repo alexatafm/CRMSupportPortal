@@ -106,21 +106,21 @@ export function CurrentUsage() {
           <div className="bg-gray-50 rounded-lg p-6 flex flex-col">
             <h3 className="text-[#1E2B4D] text-lg font-medium">Current Plan Usage</h3>
             <div className="flex-1 flex flex-col justify-between mt-6">
-              <div className="flex items-center justify-between">
+              <div className="grid grid-cols-[1fr_auto] gap-3">
                 <span className="text-xs text-[#6B778C]">Plan Tier</span>
-                <span className="text-sm font-medium text-[#42526E]">Premium</span>
+                <span className="text-sm font-medium text-[#42526E] text-right">Premium</span>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="grid grid-cols-[1fr_auto] gap-3">
                 <span className="text-xs text-[#6B778C]">Term Length</span>
-                <span className="text-sm font-medium text-[#42526E]">12 Months</span>
+                <span className="text-sm font-medium text-[#42526E] text-right">12 Months</span>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="grid grid-cols-[1fr_auto] gap-3">
                 <span className="text-xs text-[#6B778C]">Current Period</span>
-                <span className="text-sm font-medium text-[#42526E]">{formattedDate}</span>
+                <span className="text-sm font-medium text-[#42526E] text-right">{formattedDate}</span>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="grid grid-cols-[1fr_auto] gap-3">
                 <span className="text-xs text-[#6B778C]">Time Remaining</span>
-                <span className="text-sm font-medium text-[#42526E]">{daysRemaining} days ({percentageRemaining}%)</span>
+                <span className="text-sm font-medium text-[#42526E] text-right">{daysRemaining} days ({percentageRemaining}%)</span>
               </div>
             </div>
           </div>
