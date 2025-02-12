@@ -6,5 +6,5 @@ export type User = {
   email: string
   jobTitle: string
   lastSignIn?: string
-  permissions: Permission
+  permissions: Permission | Permission[]
 } 

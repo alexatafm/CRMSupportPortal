@@ -39,7 +39,7 @@ export default function DashboardPage() {
                 <div className="bg-gray-50/80 rounded-lg p-6 flex flex-col">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-medium text-xs xl:text-sm text-muted-foreground uppercase tracking-wider">In Progress</h3>
-                    <span className="bg-blue-50 text-blue-500 text-xs font-medium px-2 py-0.5 rounded-full">0</span>
+                    <span className="bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5 rounded-full">0</span>
                   </div>
                   <div className="flex-1 flex items-center justify-center">
                     <div className="text-center text-sm text-muted-foreground">

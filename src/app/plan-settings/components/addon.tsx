@@ -5,12 +5,12 @@ import { Card, CardContent } from "@/components/ui/card"
 
 type Term = "3" | "6" | "12"
 
-type ServiceType = "Strategic Consulting" | "CRM Setup, Support & Training" | "CRM Integration Development & Design"
+type ServiceType = "Strategic Consulting" | "CRM Support & Training" | "CRM Development"
 
 const hourlyRates = {
   "Strategic Consulting": 275,
-  "CRM Setup, Support & Training": 220,
-  "CRM Integration Development & Design": 180
+  "CRM Support & Training": 220,
+  "CRM Development": 180
 }
 
 interface AddonCalculatorProps {
@@ -21,8 +21,8 @@ export function AddonCalculator({ selectedTerm: defaultTerm }: AddonCalculatorPr
   const [selectedTerm, setSelectedTerm] = useState<Term>(defaultTerm)
   const [hours, setHours] = useState<Record<ServiceType, number>>({
     "Strategic Consulting": 0,
-    "CRM Setup, Support & Training": 0,
-    "CRM Integration Development & Design": 0
+    "CRM Support & Training": 0,
+    "CRM Development": 0
   })
 
   const calculateTotal = () => {
@@ -47,13 +47,12 @@ export function AddonCalculator({ selectedTerm: defaultTerm }: AddonCalculatorPr
   return (
     <Card>
       <CardContent className="p-6">
-        <div className="grid grid-cols-[350px_1fr] gap-6">
+        <div className="grid grid-cols-[250px_1fr] gap-6">
           {/* Info Card */}
           <div className="bg-gray-50 rounded-lg p-6">
             <h3 className="text-[#1E2B4D] text-lg font-medium mb-2">Additional Support Hours</h3>
             <p className="text-sm text-gray-600 mb-6">
-              Need extra support hours? Purchase additional hours for specific services and enjoy the same term-length discounts as your current plan. 
-              Perfect for handling unexpected projects or scaling up your CRM capabilities.
+              Purchase extra support hours with term-length discounts. Ideal for scaling your CRM capabilities or handling unexpected projects.
             </p>
             
             <div className="space-y-3">

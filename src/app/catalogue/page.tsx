@@ -20,10 +20,16 @@ type Task = {
   id: string
   title: string
   description: string
-  duration: string
-  supportCategories: string[]
-  hubspotRequirements: string[]
-  availableToPlans: string[]
+  categories: string[]
+  strategicHours?: number
+  setupHours?: number
+  integrationHours?: number
+}
+
+const availableHours = {
+  strategic: 1, // 6 total - 5 used
+  setup: 5, // 20 total - 15 used
+  integration: 3 // 7 total - 4 used
 }
 
 const tasks: Task[] = [
@@ -31,145 +37,131 @@ const tasks: Task[] = [
     id: "custom-hubspot-quote",
     title: "Custom HubSpot Quote Template",
     description: "Create a branded HubSpot quote template with structured logic, ensuring consistency and professionalism during the sales process.",
-    duration: "5h",
-    supportCategories: ["Content Design", "Data Migration"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Available to All Plans"]
+    categories: ["Sales", "Templates", "Automation"],
+    strategicHours: 1,
+    setupHours: 3,
+    integrationHours: 1
   },
   {
     id: "crm-data-import",
     title: "CRM Data Import",
     description: "Import data into HubSpot from CSV or other sources, with formatting and custom logic for automation, reporting, and clean data handling.",
-    duration: "1.5h",
-    supportCategories: ["Data Migration"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Available to All Plans"]
+    categories: ["Data Cleaning", "Migration", "Automation"],
+    setupHours: 1.5
   },
   {
     id: "sales-dashboard",
     title: "Sales Dashboard",
     description: "Build a custom sales dashboard offering tailored reports, deal insights, and accurate sales forecasting for enhanced decision making.",
-    duration: "1.5h",
-    supportCategories: ["Dashboards & Reporting"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Sales Hub Professional", "Operations Hub Professional"]
+    categories: ["Sales", "Reporting", "Analytics"],
+    strategicHours: 0.5,
+    setupHours: 1
   },
   {
     id: "calendar-meeting-links",
     title: "Set Up Calendar Meeting Links",
     description: "Configure calendar meeting links with custom availability, making scheduling seamless for teams and clients.",
-    duration: "1.5h",
-    supportCategories: ["HubSpot Automation", "CRM Customisation"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Available to All Plans"]
+    categories: ["Sales", "Productivity"],
+    setupHours: 1.5
   },
   {
     id: "basic-training",
     title: "Basic Training Documentation",
     description: "Develop concise training guides to help new CRM users understand and utilize essential system functionalities effectively.",
-    duration: "4h",
-    supportCategories: ["Training & Resources"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Available to All Plans"]
+    categories: ["Training", "Documentation"],
+    strategicHours: 1,
+    setupHours: 3
   },
   {
     id: "user-onboarding",
     title: "User Onboarding Session",
     description: "Provide a virtual onboarding session covering CRM basics, including post-session training notes and guidance for team success.",
-    duration: "5h",
-    supportCategories: ["Training & Resources"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Available to All Plans"]
+    categories: ["Training", "Onboarding"],
+    strategicHours: 2,
+    setupHours: 3
   },
   {
     id: "help-desk",
     title: "Set Up Help Desk",
     description: "Set up a help desk pipeline in HubSpot for effective ticket management, ensuring smooth support operations and tracking.",
-    duration: "3h",
-    supportCategories: ["HubSpot Automation", "CRM Customisation"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Service Hub Professional"]
+    categories: ["Service", "Automation", "Workflow"],
+    setupHours: 2,
+    integrationHours: 1
   },
   {
     id: "breeze-ai",
     title: "Install and Configure Breeze AI",
     description: "Install Breeze AI in your CRM, configuring basic features to enhance system intelligence and workflow efficiency.",
-    duration: "0.5h",
-    supportCategories: ["Data Clean Up", "AI/Breeze Intelligence"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Available to All Plans"]
+    categories: ["AI", "Automation", "Integration"],
+    setupHours: 0.5
   },
   {
     id: "email-signature",
     title: "Email Signature Setup",
     description: "Design and apply standardized email signatures, ensuring professional branding and uniformity across your team.",
-    duration: "1.5h",
-    supportCategories: ["CRM Customisation", "Miscellaneous"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Available to All Plans"]
+    categories: ["Marketing", "Branding"],
+    setupHours: 1.5
   },
   {
     id: "deal-stages",
     title: "Customised Deal Stages Setup",
     description: "Update deal stages in HubSpot to align with your sales process, enhancing clarity and pipeline management for your team.",
-    duration: "5h",
-    supportCategories: ["Sales Setup", "Software Consulting"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Sales Hub Starter", "Operations Hub Starter"]
+    categories: ["Sales", "Pipeline", "Customization"],
+    strategicHours: 2,
+    setupHours: 3
   },
   {
     id: "team-permissions",
     title: "Team Permissions Configuration",
     description: "Configure user roles and permissions in HubSpot, ensuring appropriate access levels for team members to manage data securely.",
-    duration: "3h",
-    supportCategories: ["CRM Customisation"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Operations Hub Professional", "Service Hub Professional"]
+    categories: ["Security", "Administration"],
+    setupHours: 3
   },
   {
     id: "blog-setup",
     title: "Blog Page Configuration",
     description: "Design a blog page with HubSpot, integrating tracking tools and ensuring compatibility with CRM workflows for content visibility.",
-    duration: "1h",
-    supportCategories: ["Website Content"],
-    hubspotRequirements: ["HubSpot Requirements"],
-    availableToPlans: ["Starter Hub Professional"]
+    categories: ["Marketing", "Content", "SEO"],
+    setupHours: 1
   }
 ]
 
 export default function TaskCataloguePage() {
   return (
     <div className="h-[calc(100vh-3.5rem)] bg-gradient-to-b from-[#374365] to-[#7E879C] flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="px-4 xl:px-6 pt-3 xl:pt-4 pb-2 xl:pb-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl xl:text-2xl font-semibold text-white">Task Catalogue</h1>
-            <p className="text-xs xl:text-sm text-white/60 mt-0.5 xl:mt-1">Browse and request pre-configured support tasks.</p>
-          </div>
+      {/* Header Section */}
+      <div className="px-6 xl:px-8 pt-4 xl:pt-5 pb-4 xl:pb-6">
+        <div className="max-w-[1800px] mx-auto">
           <SupportHoursKPI />
         </div>
       </div>
       
       {/* Main Content */}
-      <div className="px-4 xl:px-6 flex-1 min-h-0 overflow-y-auto pb-4">
-        <TaskGrid tasks={tasks.slice(0, 12)} />
+      <div className="px-6 xl:px-8 flex-1">
+        <div className="max-w-[1800px] mx-auto h-full">
+          <TaskGrid 
+            tasks={tasks} 
+            availableHours={availableHours}
+          />
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 px-4 xl:px-6 py-2 mt-auto border-t border-white/10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button className="px-2 xl:px-3 py-1 text-xs xl:text-sm text-white bg-white/10 rounded hover:bg-white/20 transition-colors">
-              Previous
-            </button>
-            <button className="px-2 xl:px-3 py-1 text-xs xl:text-sm text-white bg-white/10 rounded hover:bg-white/20 transition-colors">
-              Next
-            </button>
+      <div className="shrink-0 px-6 xl:px-8 py-4 border-t border-white/10 bg-white/5">
+        <div className="max-w-[1800px] mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button className="px-4 py-2 text-sm text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
+                Previous
+              </button>
+              <button className="px-4 py-2 text-sm text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
+                Next
+              </button>
+            </div>
+            <p className="text-sm text-white/70">
+              Showing <span className="font-medium text-white">1-12</span> of <span className="font-medium text-white">{tasks.length}</span> tasks
+            </p>
           </div>
-          <p className="text-xs xl:text-sm text-white/60">
-            Showing <span className="font-medium text-white">1-12</span> of <span className="font-medium text-white">{tasks.length}</span> tasks
-          </p>
         </div>
       </div>
     </div>

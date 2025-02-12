@@ -65,7 +65,7 @@ export function PlanComparison() {
               className="p-6"
               style={{ margin: 0, padding: '24px' }}
             >
-              <div className="grid grid-cols-[minmax(400px,_1fr)_minmax(250px,_1fr)_minmax(250px,_1fr)_minmax(250px,_1fr)] gap-6">
+              <div className="grid grid-cols-[minmax(450px,_1fr)_minmax(200px,_1fr)_minmax(200px,_1fr)_minmax(200px,_1fr)] gap-6">
                 {/* Term Length Column */}
                 <div className="bg-gray-50 rounded-lg p-6">
                   <h3 className="text-[#1E2B4D] text-lg font-medium mb-2">Term Length</h3>
@@ -198,23 +198,24 @@ export function PlanComparison() {
 
               {/* Features Table */}
               <div className="mt-8">
-                <div className="grid grid-cols-[minmax(400px,_1fr)_minmax(250px,_1fr)_minmax(250px,_1fr)_minmax(250px,_1fr)]">
+                <div className="grid grid-cols-[minmax(450px,_1fr)_minmax(200px,_1fr)_minmax(200px,_1fr)_minmax(200px,_1fr)]">
                   {/* Feature Title and Description Container */}
                   <div className="grid grid-cols-[180px_1fr] relative">
                     {/* Feature Titles Column */}
                     <div className="space-y-[2px]">
                       {[
                         "Team User Limit",
+                        "Task Catalogue",
+                        "Monthly WIP Meeting",
                         "Knowledge Base Resources",
                         "Priority Ticket Queue",
-                        "Pre-built Task Catalogue Access",
                         "Strategic Consulting",
-                        "CRM Setup, Support & Training",
-                        "CRM Integration Development & Design"
+                        "CRM Support & Training",
+                        "CRM Development"
                       ].map((title, index) => (
                         <div key={title} className={`h-14 ${index % 2 === 1 ? 'bg-gray-100' : ''}`}>
                           <div className="flex items-center px-3 h-full">
-                            <span className="text-sm font-medium text-gray-600">{title}</span>
+                            <span className="text-[13px] font-medium text-gray-600 leading-tight">{title}</span>
                           </div>
                         </div>
                       ))}
@@ -223,18 +224,19 @@ export function PlanComparison() {
                     {/* Feature Descriptions Column */}
                     <div className="space-y-[2px]">
                       {[
-                        "The amount of team members who can access and interact with the CRM support portal",
-                        "Access our library of HubSpot guides, tips, and best practices curated by our diverse team of experts",
-                        "Enjoy faster response times with prioritised ticket handling and reduced scope turnaround time",
-                        "Browse and request from our catalogue of pre-configured support tasks for streamlined assistance",
-                        "Expert guidance on CRM strategy, system optimisation, and business process improvement",
-                        "CRM data import & customisation requests, automation configuration, and personalised training sessions",
-                        "Integration development, custom sales asset design and technical implementation services"
+                        "Control the number of team members with access to the CRM support portal",
+                        "Browse and request support tasks",
+                        "Regular monthly meetings to discuss work in progress and priorities",
+                        "Access curated HubSpot guides, tips, and best practices from our expert team",
+                        "Get faster response times with prioritised ticket handling",
+                        "Get expert guidance on CRM strategy and business process optimization",
+                        "Request data imports, automation setup, and personalized training",
+                        "Get custom integration development and technical implementation support"
                       ].map((description, index) => (
                         <div key={description} className={`h-14 ${index % 2 === 1 ? 'bg-gray-100' : ''} relative`}>
                           <div className="absolute left-0 top-3 bottom-3 w-px bg-gray-200"/>
                           <div className="flex items-center pl-4 pr-3 h-full">
-                            <span className="text-xs text-gray-400 line-clamp-2">{description}</span>
+                            <span className="text-[11px] text-gray-500 line-clamp-2 leading-tight">{description}</span>
                           </div>
                         </div>
                       ))}
@@ -246,24 +248,29 @@ export function PlanComparison() {
                     {[
                       { type: "text", value: "5 Users" },
                       { type: "check" },
+                      { type: "check" },
                       { type: "cross" },
                       { type: "cross" },
-                      { type: "cross" },
-                      { type: "text", value: "12 hours" },
-                      { type: "text", value: "3 hours" }
-                    ].map((item, index) => (
-                      <div key={index} className={`flex items-center justify-center h-14 ${index % 2 === 1 ? 'bg-gray-100' : ''}`}>
-                        {item.type === "text" ? (
-                          <span className="text-sm">{item.value}</span>
-                        ) : item.type === "check" ? (
-                          <svg className="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none">
-                            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        ) : (
-                          <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none">
-                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          </svg>
-                        )}
+                      { type: "text", value: "0 Hours" },
+                      { type: "text", value: "12 Hours" },
+                      { type: "text", value: "3 Hours" }
+                    ].map((feature, index) => (
+                      <div key={index} className={`h-14 ${index % 2 === 1 ? 'bg-gray-100' : ''}`}>
+                        <div className="flex items-center justify-center h-full">
+                          {feature.type === "check" && (
+                            <svg className="w-5 h-5 text-[#FF4F11]" viewBox="0 0 24 24" fill="none">
+                              <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                          {feature.type === "cross" && (
+                            <svg className="w-5 h-5 text-gray-300" viewBox="0 0 24 24" fill="none">
+                              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                          {feature.type === "text" && (
+                            <span className="text-sm text-gray-600">{feature.value}</span>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -275,18 +282,27 @@ export function PlanComparison() {
                       { type: "check" },
                       { type: "check" },
                       { type: "check" },
-                      { type: "text", value: "3 hours" },
-                      { type: "text", value: "16 hours" },
-                      { type: "text", value: "5 hours" }
-                    ].map((item, index) => (
-                      <div key={index} className={`flex items-center justify-center h-14 ${index % 2 === 1 ? 'bg-gray-100' : ''}`}>
-                        {item.type === "text" ? (
-                          <span className="text-sm">{item.value}</span>
-                        ) : (
-                          <svg className="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none">
-                            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
+                      { type: "cross" },
+                      { type: "text", value: "3 Hours" },
+                      { type: "text", value: "16 Hours" },
+                      { type: "text", value: "5 Hours" }
+                    ].map((feature, index) => (
+                      <div key={index} className={`h-14 ${index % 2 === 1 ? 'bg-gray-100' : ''}`}>
+                        <div className="flex items-center justify-center h-full">
+                          {feature.type === "check" && (
+                            <svg className="w-5 h-5 text-[#FF4F11]" viewBox="0 0 24 24" fill="none">
+                              <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                          {feature.type === "cross" && (
+                            <svg className="w-5 h-5 text-gray-300" viewBox="0 0 24 24" fill="none">
+                              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                          {feature.type === "text" && (
+                            <span className="text-sm text-gray-600">{feature.value}</span>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -298,18 +314,27 @@ export function PlanComparison() {
                       { type: "check" },
                       { type: "check" },
                       { type: "check" },
-                      { type: "text", value: "6 hours" },
-                      { type: "text", value: "20 hours" },
-                      { type: "text", value: "7 hours" }
-                    ].map((item, index) => (
-                      <div key={index} className={`flex items-center justify-center h-14 ${index % 2 === 1 ? 'bg-gray-100' : ''}`}>
-                        {item.type === "text" ? (
-                          <span className="text-sm">{item.value}</span>
-                        ) : (
-                          <svg className="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none">
-                            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
+                      { type: "check" },
+                      { type: "text", value: "6 Hours" },
+                      { type: "text", value: "20 Hours" },
+                      { type: "text", value: "7 Hours" }
+                    ].map((feature, index) => (
+                      <div key={index} className={`h-14 ${index % 2 === 1 ? 'bg-gray-100' : ''}`}>
+                        <div className="flex items-center justify-center h-full">
+                          {feature.type === "check" && (
+                            <svg className="w-5 h-5 text-[#FF4F11]" viewBox="0 0 24 24" fill="none">
+                              <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                          {feature.type === "cross" && (
+                            <svg className="w-5 h-5 text-gray-300" viewBox="0 0 24 24" fill="none">
+                              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                          {feature.type === "text" && (
+                            <span className="text-sm text-gray-600">{feature.value}</span>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>

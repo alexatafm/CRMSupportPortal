@@ -40,8 +40,8 @@ export default function TeamMembersPage() {
 
       <EditUserModal 
         user={selectedUser}
-        onClose={() => setSelectedUser(null)}
-        onSave={handleSaveUser}
+        onCloseAction={() => setSelectedUser(null)}
+        onSaveAction={handleSaveUser}
       />
 
       <AddUserModal

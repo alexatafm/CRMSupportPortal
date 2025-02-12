@@ -10,11 +10,43 @@ type UserTableProps = {
 const mockUsers: User[] = [
   {
     id: "1",
-    name: "Michael Scott",
-    email: "alex@crm.services",
-    jobTitle: "Regional Manager",
-    lastSignIn: "Never",
+    name: "Sarah Chen",
+    email: "sarah.chen@company.com",
+    jobTitle: "CTO / IT Director",
+    lastSignIn: "2 hours ago",
     permissions: "Admin"
+  },
+  {
+    id: "2",
+    name: "David Miller",
+    email: "david.miller@company.com",
+    jobTitle: "IT Manager",
+    lastSignIn: "1 hour ago",
+    permissions: ["Approve Tickets", "Create Tickets", "View & Comment"]
+  },
+  {
+    id: "3",
+    name: "Emily Rodriguez",
+    email: "emily.rodriguez@company.com",
+    jobTitle: "IT Support Specialist",
+    lastSignIn: "3 hours ago",
+    permissions: ["Create Tickets", "View & Comment"]
+  },
+  {
+    id: "4",
+    name: "James Wilson",
+    email: "james.wilson@company.com",
+    jobTitle: "Sales Director",
+    lastSignIn: "Just now",
+    permissions: ["Create Tickets", "View & Comment"]
+  },
+  {
+    id: "5",
+    name: "Lisa Thompson",
+    email: "lisa.thompson@company.com",
+    jobTitle: "Marketing Manager",
+    lastSignIn: "Yesterday",
+    permissions: ["View & Comment"]
   }
 ]
 
@@ -22,7 +54,7 @@ export function UserTable({ onEdit }: UserTableProps) {
   const [users] = useState<User[]>(mockUsers)
 
   return (
-    <div className="bg-white rounded-lg shadow-sm">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -56,12 +88,25 @@ export function UserTable({ onEdit }: UserTableProps) {
                   <span className="text-sm text-gray-600">{user.lastSignIn}</span>
                 </td>
                 <td className="py-4 px-6">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                    ${user.permissions === 'Admin' ? 'bg-blue-100 text-blue-800' : 
-                      user.permissions === 'Create Tickets' ? 'bg-green-100 text-green-800' : 
-                      'bg-gray-100 text-gray-800'}`}>
-                    {user.permissions}
-                  </span>
+                  {typeof user.permissions === 'string' ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {user.permissions}
+                    </span>
+                  ) : (
+                    <div className="flex flex-wrap gap-1">
+                      {user.permissions.map((permission) => (
+                        <span 
+                          key={permission}
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                            ${permission === 'Create Tickets' ? 'bg-green-100 text-green-800' : 
+                              permission === 'Approve Tickets' ? 'bg-purple-100 text-purple-800' :
+                              'bg-gray-100 text-gray-800'}`}
+                        >
+                          {permission}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </td>
                 <td className="py-4 px-6">
                   <div className="flex items-center justify-end gap-2">
@@ -70,7 +115,7 @@ export function UserTable({ onEdit }: UserTableProps) {
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        if (onEdit) onEdit(user)
+                        onEdit?.(user)
                       }}
                     >
                       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">

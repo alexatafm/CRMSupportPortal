@@ -14,12 +14,12 @@ const roles: Role[] = [
     totalHours: 6
   },
   {
-    name: "CRM Setup, Support & Training",
+    name: "CRM Support & Training",
     hoursUsed: 15,
     totalHours: 20
   },
   {
-    name: "CRM Integration Development & Design",
+    name: "CRM Development",
     hoursUsed: 4,
     totalHours: 7
   }
@@ -85,12 +85,12 @@ export function CurrentUsage() {
         <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
       </svg>
     ),
-    "CRM Setup, Support & Training": (
+    "CRM Support & Training": (
       <svg className="w-5 h-5 text-[#42526E]" viewBox="0 0 24 24" fill="none">
         <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       </svg>
     ),
-    "CRM Integration Development & Design": (
+    "CRM Development": (
       <svg className="w-5 h-5 text-[#42526E]" viewBox="0 0 24 24" fill="none">
         <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
         <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
