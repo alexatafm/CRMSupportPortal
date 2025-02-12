@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { useState, useEffect } from "react"
+import { GetInTouchModal } from "./GetInTouchModal"
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     document.body.classList.toggle('sidebar-collapsed', isCollapsed)
@@ -145,6 +147,28 @@ export function Sidebar({ className }: SidebarProps) {
           ))}
         </ul>
       </nav>
+
+      <div className="p-3 mt-auto">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className={cn(
+            "flex items-center w-full h-9 px-3 rounded text-sm transition-colors bg-white/10 hover:bg-white/20 text-white",
+            isCollapsed ? "justify-center" : "space-x-3"
+          )}
+        >
+          <div className="flex items-center justify-center w-5 h-5">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+              <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          {!isCollapsed && <span>Get in Touch</span>}
+        </button>
+      </div>
+
+      <GetInTouchModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   )
 } 

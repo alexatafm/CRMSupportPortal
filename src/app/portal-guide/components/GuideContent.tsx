@@ -1,6 +1,6 @@
 "use client"
 
-import { GettingStarted, SupportTickets, ServiceHours, PlansAndPricing } from './guidepages'
+import { GettingStarted, SupportTickets, ServiceHours, PlansAndPricing, TeamManagement, TaskCatalogue, AdditionalHours } from './guidepages'
 
 interface GuideContentProps {
   activeSection: string
@@ -17,6 +17,12 @@ export function GuideContent({ activeSection }: GuideContentProps) {
         return <ServiceHours />
       case "plans-pricing":
         return <PlansAndPricing />
+      case "team-management":
+        return <TeamManagement />
+      case "task-catalog":
+        return <TaskCatalogue />
+      case "additional-hours":
+        return <AdditionalHours />
       default:
         return <GettingStarted />
     }

@@ -1,4 +1,7 @@
 export { GettingStarted } from './GettingStarted'
 export { SupportTickets } from './SupportTickets'
 export * from './ServiceHours'
-export { PlansAndPricing } from './PlansAndPricing' 
+export { PlansAndPricing } from './PlansAndPricing'
+export { TeamManagement } from './TeamManagement'
+export { TaskCatalogue } from './TaskCatalogue'
+export { AdditionalHours } from './AdditionalHours' 
