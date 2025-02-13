@@ -141,7 +141,14 @@ export function Sidebar({ className }: SidebarProps) {
                 )}>
                   {route.icon}
                 </div>
-                {!isCollapsed && <span>{route.label}</span>}
+                {!isCollapsed && (
+                  <span 
+                    className="transition-opacity duration-300"
+                    style={{ opacity: isCollapsed ? 0 : 1, transitionDelay: '150ms' }}
+                  >
+                    {route.label}
+                  </span>
+                )}
               </Link>
             </li>
           ))}
@@ -152,16 +159,40 @@ export function Sidebar({ className }: SidebarProps) {
         <button
           onClick={() => setIsModalOpen(true)}
           className={cn(
-            "flex items-center w-full h-9 px-3 rounded text-sm transition-colors bg-white/10 hover:bg-white/20 text-white",
-            isCollapsed ? "justify-center" : "space-x-3"
+            "flex flex-col w-full rounded text-sm transition-colors bg-white/10 hover:bg-white/20 text-white text-left overflow-hidden",
+            isCollapsed ? "justify-center py-2.5 px-3" : "p-4"
           )}
         >
-          <div className="flex items-center justify-center w-5 h-5">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-              <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          {!isCollapsed && <span>Get in Touch</span>}
+          {isCollapsed ? (
+            <div className="flex items-center justify-center w-5 h-5">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          ) : (
+            <div className="flex flex-col w-full space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-5 h-5">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                    <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <span 
+                  className="text-base transition-opacity duration-300"
+                  style={{ opacity: isCollapsed ? 0 : 1, transitionDelay: '150ms' }}
+                >
+                  Get in Touch
+                </span>
+              </div>
+              <div className="h-px bg-white/10" />
+              <p 
+                className="text-[11px] text-white/70 leading-tight transition-opacity duration-300"
+                style={{ opacity: isCollapsed ? 0 : 1, transitionDelay: '200ms' }}
+              >
+                For any non-task related questions, we're here to help
+              </p>
+            </div>
+          )}
         </button>
       </div>
 

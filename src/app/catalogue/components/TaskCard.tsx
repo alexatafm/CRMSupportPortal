@@ -2,6 +2,7 @@ type TaskCardProps = {
   title: string
   description: string
   categories: string[]
+  supportArea: string
   strategicHours?: number
   setupHours?: number
   integrationHours?: number
@@ -14,6 +15,7 @@ export function TaskCard({
   title, 
   description, 
   categories,
+  supportArea,
   strategicHours = 0,
   setupHours = 0,
   integrationHours = 0,
@@ -57,11 +59,22 @@ export function TaskCard({
         </div>
 
         <div className="flex flex-wrap gap-1.5">
-          {categories.map((category) => (
-            <span key={category} className="px-2 py-0.5 text-[11px] rounded-md bg-gray-100 text-gray-600 font-medium">
-              {category}
+          {/* Support Area Badge */}
+          <span className="px-2 py-0.5 text-[11px] rounded-md bg-[#FF4F11]/10 text-[#FF4F11] font-medium">
+            {supportArea}
+          </span>
+
+          {/* Categories Badges */}
+          {categories.length > 0 && (
+            <span className="px-2 py-0.5 text-[11px] rounded-md bg-gray-100 text-gray-600 font-medium">
+              {categories[0]}
             </span>
-          ))}
+          )}
+          {categories.length > 1 && (
+            <span className="px-1.5 py-0.5 text-[11px] rounded-md bg-gray-100 text-gray-600 font-medium">
+              +{categories.length - 1}
+            </span>
+          )}
         </div>
       </div>
     </div>

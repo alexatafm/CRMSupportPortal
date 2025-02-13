@@ -3,12 +3,15 @@
 import { useState } from "react"
 import { TaskCard } from "./TaskCard"
 import { TaskDetailsPanel } from "./TaskDetailsPanel"
+import React from "react"
 
 type Task = {
   id: string
   title: string
   description: string
   categories: string[]
+  supportArea: string
+  specificationNotes: string
   strategicHours?: number
   setupHours?: number
   integrationHours?: number
@@ -28,8 +31,43 @@ export function TaskGrid({ tasks, availableHours }: TaskGridProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories")
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
-  const allCategories = Array.from(new Set(tasks.flatMap(task => task.categories)))
+  const dropdownRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const categories = [
+    "AI/Breeze Intelligence",
+    "Custom Integration Issue",
+    "Dashboards & Reporting",
+    "Data Formatting",
+    "Data Migration",
+    "HubSpot Automation",
+    "HubSpot Custom Email Template",
+    "HubSpot Custom Quote Design",
+    "HubSpot Customisation",
+    "HubSpot Integration Request",
+    "HubSpot Training Session(s)",
+    "HubSpot Website/s",
+    "Import/Export",
+    "Native Integration Issue",
+    "Software Compatibility",
+    "Software Process Consulting",
+    "Training Material",
+    "Other"
+  ]
+
+  const allCategories = Array.from(new Set([...categories, ...tasks.flatMap(task => task.categories)]))
 
   const hasEnoughHours = (task: Task) => {
     const hasStrategicHours = !task.strategicHours || task.strategicHours <= availableHours.strategic
@@ -76,16 +114,51 @@ export function TaskGrid({ tasks, availableHours }: TaskGridProps) {
             />
           </div>
           
-          <select 
-            className="h-10 px-4 rounded-lg bg-white/10 text-white border border-white/10 text-sm min-w-[200px] focus:outline-none focus:border-white/20"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option>All Categories</option>
-            {allCategories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
+          <div className="relative min-w-[200px]" ref={dropdownRef}>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-full h-10 px-4 rounded-lg bg-white/10 text-white border border-white/10 text-sm flex items-center justify-between hover:bg-white/20 focus:outline-none focus:border-white/20"
+            >
+              <span>{selectedCategory}</span>
+              <svg className={`w-4 h-4 text-white/50 transition-transform ${isOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
+            {isOpen && (
+              <div className="absolute top-full left-0 mt-1 w-[300px] max-h-[400px] overflow-y-auto bg-[#1C2B4F] rounded-lg border border-white/10 shadow-lg z-50">
+                <div className="p-2">
+                  <button
+                    onClick={() => {
+                      setSelectedCategory("All Categories")
+                      setIsOpen(false)
+                    }}
+                    className="w-full px-3 py-2 text-left text-sm text-white/90 hover:bg-white/10 rounded-lg mb-1"
+                  >
+                    All Categories
+                  </button>
+                  <div className="space-y-0.5">
+                    {allCategories.map((category) => (
+                      <button
+                        key={category}
+                        onClick={() => {
+                          setSelectedCategory(category)
+                          setIsOpen(false)
+                        }}
+                        className={`w-full px-3 py-2 text-left text-sm rounded-lg transition-colors ${
+                          selectedCategory === category
+                            ? 'bg-white text-[#1C2B4F]'
+                            : 'text-white/90 hover:bg-white/10'
+                        }`}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => setShowAvailableOnly(!showAvailableOnly)}
@@ -126,6 +199,7 @@ export function TaskGrid({ tasks, availableHours }: TaskGridProps) {
                 title={task.title}
                 description={task.description}
                 categories={task.categories}
+                supportArea={task.supportArea}
                 strategicHours={task.strategicHours}
                 setupHours={task.setupHours}
                 integrationHours={task.integrationHours}

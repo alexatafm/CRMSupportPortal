@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/ui/sidebar";
 import { Header } from "@/components/ui/header";
+import { CreateTicketButton } from "@/components/ui/CreateTicketButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+          <CreateTicketButton />
         </div>
       </body>
     </html>
