@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { useState } from "react"
 import { TicketCardModal } from "./TicketCardModal"
+import { SupportTicketCard } from "./SupportTicketCard"
 
 type Ticket = {
   id: string
@@ -12,7 +13,7 @@ type Ticket = {
   time: string
   scopedHours: string
   contact?: string
-  status: "New Request" | "Awaiting Approval"
+  status: "New Request" | "Awaiting Approval" | "In Progress"
   createdBy?: string
   ticketNumber?: string
   supportArea?: string[]
@@ -43,7 +44,7 @@ const submittedTickets: Ticket[] = [
     description: "Request for a custom dashboard showing real-time sales pipeline metrics and team performance KPIs",
     date: "Jan 6, 2025",
     time: "07:19 AEST",
-    scopedHours: "TBD",
+    scopedHours: "TBC",
     status: "New Request",
     createdBy: "Michael Torres",
     ticketNumber: "18633083993",
@@ -58,8 +59,8 @@ const submittedTickets: Ticket[] = [
     description: "Configure automated lead scoring system based on website interaction, email engagement, and form submissions",
     date: "Jan 6, 2025",
     time: "07:23 AEST",
-    scopedHours: "TBD",
-    status: "New Request",
+    scopedHours: "6",
+    status: "In Progress",
     createdBy: "Emma Watson",
     ticketNumber: "18633083994",
     supportArea: ["marketing hub", "sales hub"],
@@ -73,7 +74,7 @@ const submittedTickets: Ticket[] = [
     description: "Create a comprehensive reporting template for monthly marketing ROI analysis and campaign performance",
     date: "Jan 6, 2025",
     time: "07:26 AEST",
-    scopedHours: "TBD",
+    scopedHours: "TBC",
     status: "Awaiting Approval",
     createdBy: "James Mitchell",
     ticketNumber: "18633083995",
@@ -88,7 +89,7 @@ const submittedTickets: Ticket[] = [
     description: "Setup automated workflows for customer onboarding, renewal reminders, and satisfaction surveys",
     date: "Jan 6, 2025",
     time: "07:28 AEST",
-    scopedHours: "TBD",
+    scopedHours: "TBC",
     status: "Awaiting Approval",
     createdBy: "Lisa Parker",
     ticketNumber: "18633083996",
@@ -96,93 +97,60 @@ const submittedTickets: Ticket[] = [
     supportCategory: ["automation", "workflow"],
     primaryOutcomeObjectives: "Automate customer lifecycle communications",
     supportingFiles: []
+  },
+  {
+    id: "email-templates",
+    title: "Custom Email Templates Setup",
+    description: "Design and implement branded email templates for various customer communication touchpoints",
+    date: "Jan 6, 2025",
+    time: "07:30 AEST",
+    scopedHours: "4",
+    status: "In Progress",
+    createdBy: "David Kim",
+    ticketNumber: "18633083997",
+    supportArea: ["marketing hub"],
+    supportCategory: ["email templates", "branding"],
+    primaryOutcomeObjectives: "Create consistent email branding",
+    supportingFiles: []
   }
 ]
 
-function TicketCard({ ticket }: { ticket: Ticket }) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  return (
-    <>
-      <Card 
-        className="mb-2 xl:mb-3 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow bg-white cursor-pointer" 
-        onClick={() => setIsModalOpen(true)}
-      >
-        <CardContent className="p-2 xl:p-3">
-          <div className="flex flex-col h-[80px] xl:h-[90px]">
-            <div className="flex justify-between">
-              <div className="flex-1 mr-3">
-                <h4 className="text-xs xl:text-sm font-semibold text-[#42526E] mb-0.5 xl:mb-1">{ticket.title}</h4>
-                <p className="text-[11px] xl:text-xs text-[#6B778C] line-clamp-2 mb-1 xl:mb-2">{ticket.description || ticket.title}</p>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-[10px] xl:text-xs text-[#0052CC] bg-[#DEEBFF] px-2 py-0.5 rounded-full font-medium mb-2">
-                  {ticket.status}
-                </span>
-                <div className="flex flex-col items-end space-y-1 text-[10px] xl:text-[11px] text-[#6B778C]">
-                  <div className="flex items-center gap-1">
-                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
-                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M3 10h18M16 2v4M8 2v4" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                    <span>{ticket.date}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M12 6v6l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                    <span>{ticket.time}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="mt-auto flex justify-between items-end text-[10px] xl:text-[11px] text-[#6B778C]">
-              <div className="flex items-center gap-1">
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 8v4l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-                <span>Scoped Hours: {ticket.scopedHours}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M5 18c0-1.657 3.134-3 7-3s7 1.343 7 3" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-                <span>{ticket.createdBy}</span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {isModalOpen && (
-        <TicketCardModal
-          ticket={{
-            ...ticket,
-            ticketNumber: ticket.ticketNumber || "N/A",
-            created: `${ticket.date}, ${ticket.time}`,
-            supportArea: ticket.supportArea || [],
-            supportCategory: ticket.supportCategory || [],
-            primaryOutcomeObjectives: ticket.primaryOutcomeObjectives || "",
-            supportingFiles: ticket.supportingFiles || [],
-            createdBy: ticket.createdBy || "No Contact",
-            description: ticket.description || ticket.title
-          }}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
-    </>
-  )
-}
-
 export function KanbanBoard() {
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
+
   return (
     <>
       {submittedTickets.map((ticket) => (
-        <TicketCard key={ticket.id} ticket={ticket} />
+        <div key={ticket.id} onClick={() => setSelectedTicket(ticket)}>
+          <SupportTicketCard
+            title={ticket.title}
+            description={ticket.description || ticket.title}
+            ticketId={ticket.ticketNumber || ticket.id}
+            status={ticket.status}
+            date={ticket.date}
+            time={ticket.time}
+            assignee={ticket.createdBy || "No Contact"}
+            scopedHours={ticket.scopedHours}
+          />
+        </div>
       ))}
+
+      {selectedTicket && (
+        <TicketCardModal
+          ticket={{
+            ...selectedTicket,
+            ticketNumber: selectedTicket.ticketNumber || "N/A",
+            created: `${selectedTicket.date}, ${selectedTicket.time}`,
+            supportArea: selectedTicket.supportArea || [],
+            supportCategory: selectedTicket.supportCategory || [],
+            primaryOutcomeObjectives: selectedTicket.primaryOutcomeObjectives || "",
+            supportingFiles: selectedTicket.supportingFiles || [],
+            createdBy: selectedTicket.createdBy || "No Contact",
+            description: selectedTicket.description || selectedTicket.title
+          }}
+          onClose={() => setSelectedTicket(null)}
+        />
+      )}
     </>
   )
 } 

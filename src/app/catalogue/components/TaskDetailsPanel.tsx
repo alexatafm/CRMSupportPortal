@@ -147,7 +147,7 @@ export function TaskDetailsPanel({ task, onCloseAction, availableHours }: TaskDe
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm panel-backdrop z-[49]"
             onClick={onCloseAction}
           />
           <motion.div
@@ -155,22 +155,26 @@ export function TaskDetailsPanel({ task, onCloseAction, availableHours }: TaskDe
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: "tween", duration: 0.2 }}
-            className="fixed top-0 right-0 w-[600px] h-full bg-white shadow-xl z-50 flex flex-col rounded-tl-xl rounded-bl-xl overflow-hidden"
+            className="fixed top-[56px] right-0 w-[600px] h-[calc(100vh-56px)] bg-white shadow-xl z-[51] flex flex-col overflow-hidden rounded-tl-xl rounded-bl-xl"
           >
             {/* Close Button */}
             <button
               onClick={onCloseAction}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
                 <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               </svg>
             </button>
 
-            {/* Content */}
+            {/* Fixed Title Section */}
+            <div className="shrink-0 px-6 pt-4 pb-3 border-b border-gray-100">
+              <h2 className="text-xl font-semibold text-[#1C2B4F]">{task.title}</h2>
+            </div>
+
+            {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto">
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-[#1C2B4F] mb-2">{task.title}</h2>
+              <div className="px-6 py-6">
                 <p className="text-[#42526E] mb-6">{task.description}</p>
 
                 {/* Hours Required */}
@@ -367,19 +371,19 @@ export function TaskDetailsPanel({ task, onCloseAction, availableHours }: TaskDe
                 )}
 
                 {/* Task Details */}
-                <div className="space-y-6">
+                <div className="space-y-5">
                   <div>
-                    <h3 className="text-[#1C2B4F] font-medium mb-2">Support Area</h3>
-                    <div className="inline-flex px-2.5 py-1 rounded-md bg-[#FF4F11]/10 text-[#FF4F11]">
+                    <h3 className="text-[#1C2B4F] text-sm font-medium mb-1.5">Support Area</h3>
+                    <div className="inline-flex px-2 py-0.5 rounded bg-[#FF4F11]/10 text-[#FF4F11] text-xs">
                       {task.supportArea}
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-[#1C2B4F] font-medium mb-2">Categories</h3>
-                    <div className="flex flex-wrap gap-1.5">
+                    <h3 className="text-[#1C2B4F] text-sm font-medium mb-1.5">Categories</h3>
+                    <div className="flex flex-wrap gap-1">
                       {task.categories.map((category) => (
-                        <span key={category} className="px-2.5 py-1 text-sm rounded-md bg-gray-100 text-gray-600">
+                        <span key={category} className="px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-600">
                           {category}
                         </span>
                       ))}
@@ -408,7 +412,7 @@ export function TaskDetailsPanel({ task, onCloseAction, availableHours }: TaskDe
                 </button>
               ) : (
                 <button
-                  className="w-full px-6 py-2.5 rounded-lg text-white text-sm font-medium transition-colors bg-[#FF4F11] hover:bg-[#FF4F11]/90"
+                  className="w-full px-6 py-3 rounded-lg text-white text-sm font-medium transition-colors bg-[#FF4F11] hover:bg-[#FF4F11]/90"
                 >
                   Submit Support Request From Catalogue Task
                 </button>

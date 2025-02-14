@@ -5,11 +5,11 @@
 html, body {
   height: 100%;
   min-height: 100vh;
+  overflow: hidden; /* Prevent body scrolling */
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  overflow-y: overlay;
 }
 
 /* Scrollbar Styles */
@@ -33,8 +33,8 @@ body {
 
 /* For Firefox */
 * {
-  scrollbar-width: none;  /* Hide in Firefox */
-  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(25, 42, 83, 0.2) transparent;
 }
 
 @layer base {
@@ -134,29 +134,71 @@ body {
 
 /* Sidebar and Layout styles */
 .sidebar {
-  width: 200px;
+  @apply fixed top-0 left-0 bottom-0;
+  width: 240px;
   transition: width 0.3s ease;
+  z-index: 50;
+}
+
+/* Add backdrop styles */
+.modal-backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm;
+  z-index: 49;
 }
 
 .sidebar-collapsed .sidebar {
   width: 64px;
 }
 
-.main-content {
-  margin-left: 200px;
-  transition: margin-left 0.3s ease;
-}
-
-.sidebar-collapsed .main-content {
-  margin-left: 64px;
+/* Selected page state */
+.nav-item-selected {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Header styles */
-header {
-  left: 200px;
-  transition: left 0.3s ease;
+.header {
+  @apply fixed top-0 bg-header shadow-sm;
+  left: 240px;
+  right: 0;
+  height: 56px;
+  transition: all 0.3s ease;
+  z-index: 50;
 }
 
-.sidebar-collapsed header {
+.sidebar-collapsed .header {
   left: 64px;
+}
+
+/* Main content styles */
+main {
+  @apply fixed;
+  top: 56px;
+  left: 240px;
+  right: 0;
+  bottom: 0;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar-collapsed main {
+  left: 64px;
+}
+
+/* Content container styles */
+.content-container {
+  @apply h-full overflow-y-auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Modal and panel backdrop styles */
+.modal-backdrop,
+.panel-backdrop {
+  clip-path: inset(0 0 0 240px);
+  transition: clip-path 0.3s ease;
+}
+
+.sidebar-collapsed .modal-backdrop,
+.sidebar-collapsed .panel-backdrop {
+  clip-path: inset(0 0 0 64px);
 }

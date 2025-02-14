@@ -3,6 +3,8 @@
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { useState } from "react"
+import { CreateTicketModal } from "./CreateTicketModal"
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {}
 
@@ -21,11 +23,7 @@ function getPageConfig(pathname: string): PageConfig {
   switch (pathname) {
     case '/dashboard':
       return {
-        title: 'Dashboard',
-        action: {
-          label: 'New Ticket',
-          href: '/dashboard/new'
-        }
+        title: 'Dashboard'
       }
     case '/catalogue':
       return {
@@ -59,32 +57,38 @@ function getPageConfig(pathname: string): PageConfig {
 
 export function Header({ className, ...props }: HeaderProps) {
   const pathname = usePathname()
+  const [isCreateTicketModalOpen, setIsCreateTicketModalOpen] = useState(false)
   const config = getPageConfig(pathname)
 
   return (
-    <header className={cn("flex h-14 items-center justify-between px-6 bg-header text-white", className)} {...props}>
-      <h1 className="text-lg font-semibold">
-        <span className="opacity-70">CRM Support Portal</span>
-        <span className="mx-2 opacity-50">/</span>
-        <span>{config.title}</span>
-      </h1>
-      {config.action && (
-        config.action.href ? (
-          <Link
-            href={config.action.href}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2"
-          >
-            {config.action.label}
-          </Link>
-        ) : (
+    <header className={cn("header", className)} {...props}>
+      <div className="h-full flex items-center justify-between px-6 text-white">
+        <h1 className="text-lg font-semibold">
+          <span className="opacity-70">CRM Support Portal</span>
+          <span className="mx-2 opacity-50">/</span>
+          <span>{config.title}</span>
+        </h1>
+        <div className="flex items-center gap-3">
           <button
-            onClick={config.action.onClick}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2"
+            onClick={() => setIsCreateTicketModalOpen(true)}
+            className="flex items-center gap-2 px-4 h-9 bg-[#FF4F11] hover:bg-[#FF4F11]/90 text-white rounded-lg transition-colors"
           >
-            {config.action.label}
+            <svg 
+              className="w-4 h-4"
+              viewBox="0 0 24 24" 
+              fill="none"
+            >
+              <path d="M12 6v12m-6-6h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+            <span className="text-sm font-medium">Create New Support Ticket</span>
           </button>
-        )
-      )}
+        </div>
+
+        <CreateTicketModal 
+          isOpen={isCreateTicketModalOpen}
+          onCloseAction={() => setIsCreateTicketModalOpen(false)}
+        />
+      </div>
     </header>
   )
 } 

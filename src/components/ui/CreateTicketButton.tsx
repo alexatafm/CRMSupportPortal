@@ -33,17 +33,17 @@ export function CreateTicketButton() {
         onClick={() => setIsModalOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`fixed bottom-[15%] z-50 flex items-center gap-2 bg-[#FF4F11] text-white shadow-lg transition-all duration-200 hover:bg-[#FF4F11]/90 group rounded-l-lg ${
+        className={`fixed bottom-[15%] z-50 flex items-center gap-3 bg-[#FF4F11] text-white shadow-lg transition-all duration-200 hover:bg-[#FF4F11]/90 group rounded-l-lg ${
           isDetailsOpen ? 'right-[600px]' : 'right-0'
         }`}
         style={{
-          padding: isHovered ? "12px 20px 12px 16px" : "12px 12px 12px 16px",
-          width: isHovered ? "auto" : "48px",
+          padding: isHovered ? "16px 24px 16px 20px" : "16px 16px 16px 20px",
+          width: isHovered ? "auto" : "60px",
           transform: "translateY(50%)"
         }}
       >
         <svg 
-          className="w-5 h-5 flex-shrink-0" 
+          className="w-6 h-6 flex-shrink-0" 
           viewBox="0 0 24 24" 
           fill="none"
         >
@@ -55,7 +55,7 @@ export function CreateTicketButton() {
           />
         </svg>
         <span 
-          className="text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-200"
+          className="text-base font-medium whitespace-nowrap overflow-hidden transition-all duration-200"
           style={{
             width: isHovered ? "auto" : "0",
             opacity: isHovered ? "1" : "0"

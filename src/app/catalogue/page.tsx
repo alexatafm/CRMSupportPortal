@@ -152,41 +152,34 @@ const tasks: Task[] = [
   }
 ]
 
-export default function TaskCataloguePage() {
+export default function CataloguePage() {
   return (
-    <div className="h-[calc(100vh-3.5rem)] bg-gradient-to-b from-[#374365] to-[#7E879C] flex flex-col overflow-hidden">
-      {/* Header Section */}
-      <div className="px-6 xl:px-8 pt-4 xl:pt-5 pb-4 xl:pb-6">
-        <div className="max-w-[1800px] mx-auto">
-          <SupportHoursKPI />
-        </div>
-      </div>
-      
-      {/* Main Content */}
-      <div className="px-6 xl:px-8 flex-1">
-        <div className="max-w-[1800px] mx-auto h-full">
-          <TaskGrid 
-            tasks={tasks} 
-            availableHours={availableHours}
-          />
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="shrink-0 px-6 xl:px-8 py-4 border-t border-white/10 bg-white/5">
-        <div className="max-w-[1800px] mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button className="px-4 py-2 text-sm text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
-                Previous
-              </button>
-              <button className="px-4 py-2 text-sm text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
-                Next
-              </button>
+    <div className="h-full bg-gradient-to-b from-[#374365] to-[#7E879C]">
+      <div className="content-container">
+        {/* Main container with fixed padding and max width */}
+        <div className="h-full mx-auto max-w-[1800px] p-6">
+          {/* Flex container for all components */}
+          <div className="flex flex-col h-full">
+            {/* Support Hours KPI - Fixed height */}
+            <div className="flex-none">
+              <SupportHoursKPI />
             </div>
-            <p className="text-sm text-white/70">
-              Showing <span className="font-medium text-white">1-12</span> of <span className="font-medium text-white">{tasks.length}</span> tasks
-            </p>
+            
+            {/* Task Grid Container - Flexible height with minimum space */}
+            <div className="flex-1 min-h-0 mt-6">
+              <TaskGrid tasks={tasks} availableHours={availableHours} />
+            </div>
+
+            {/* Pagination - Fixed height */}
+            <div className="flex-none mt-6 flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <button className="h-9 px-4 bg-card/50 rounded-lg font-medium">Previous</button>
+                <button className="h-9 px-4 bg-card/50 rounded-lg font-medium">Next</button>
+              </div>
+              <div className="text-white/70">
+                Showing 1-12 of {tasks.length} tasks
+              </div>
+            </div>
           </div>
         </div>
       </div>

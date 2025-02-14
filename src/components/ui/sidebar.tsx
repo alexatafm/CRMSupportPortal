@@ -12,7 +12,7 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isGetInTouchModalOpen, setIsGetInTouchModalOpen] = useState(false)
 
   useEffect(() => {
     document.body.classList.toggle('sidebar-collapsed', isCollapsed)
@@ -78,61 +78,100 @@ export function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      <div className="h-[60px] flex items-center justify-center">
+      <div className="h-[80px] flex items-center justify-center">
         {isCollapsed ? (
-          <div className="w-8 h-8 flex items-center justify-center">
+          <div className="w-12 h-12 flex items-center justify-center">
             <Image 
               src="/logosquare.svg" 
               alt="Logo"
-              width={32}
-              height={32}
-              className="w-8 h-8"
+              width={40}
+              height={40}
+              className="w-10 h-10"
               priority
             />
           </div>
         ) : (
-          <div className="h-8 flex items-center justify-center">
+          <div className="h-12 w-full flex items-center justify-center">
             <Image 
               src="/logowide.svg" 
               alt="Logo"
-              width={140}
-              height={32}
-              className="h-8 w-auto"
+              width={160}
+              height={40}
+              className="h-10 w-auto"
               priority
             />
           </div>
         )}
       </div>
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-[22px] bg-navbar rounded-full p-1.5 hover:bg-white/10 transition-colors border border-white/10"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className={cn("w-3 h-3 transition-transform", isCollapsed ? "rotate-180" : "")}
+
+      {/* Section Divider */}
+      <div className="px-3 mb-3">
+        <div className="h-px bg-white/10" />
+      </div>
+
+      {/* Collapse Control */}
+      <div className="px-3">
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={cn(
+            "flex rounded-xl text-[13px] transition-all duration-200",
+            "text-white/60 hover:text-white",
+            isCollapsed ? "w-11 justify-center" : "w-full",
+            "h-11"
+          )}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-      </button>
-      <nav className="flex-1 py-4">
-        <ul className="space-y-1 px-3">
+          {isCollapsed ? (
+            <div className="flex items-center justify-center w-full h-full">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4 transition-transform duration-200"
+              >
+                <path 
+                  d="M9 5l7 7-7 7" 
+                  stroke="currentColor" 
+                  strokeWidth={2.5} 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 px-4 w-full h-full">
+              <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="w-4 h-4 transition-transform duration-200"
+                >
+                  <path 
+                    d="M15 5l-7 7 7 7" 
+                    stroke="currentColor" 
+                    strokeWidth={2.5} 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <span className="font-medium">Collapse Sidebar</span>
+            </div>
+          )}
+        </button>
+      </div>
+
+      <nav className="flex-1 px-3 mt-0.5">
+        <ul className="space-y-0.5">
           {routes.map((route) => (
             <li key={route.href}>
               <Link
                 href={route.href}
                 className={cn(
-                  "flex items-center h-9 space-x-3 px-3 rounded text-sm transition-colors",
+                  "flex items-center transition-all duration-200",
+                  isCollapsed ? "justify-center h-11 w-11" : "h-11 px-4",
+                  "rounded-xl",
                   pathname === route.href 
-                    ? "bg-white/20" 
-                    : "hover:bg-white/10",
-                  pathname === route.href
-                    ? "text-white"
-                    : "text-white/70 hover:text-white",
-                  isCollapsed ? "justify-center" : ""
+                    ? "nav-item-selected text-white" 
+                    : "text-white/60 hover:text-white hover:bg-white/10",
                 )}
               >
                 <div className={cn(
@@ -143,7 +182,10 @@ export function Sidebar({ className }: SidebarProps) {
                 </div>
                 {!isCollapsed && (
                   <span 
-                    className="transition-opacity duration-300"
+                    className={cn(
+                      "ml-3 text-[13px] font-medium transition-opacity duration-300",
+                      pathname === route.href ? "text-white" : "text-white/70"
+                    )}
                     style={{ opacity: isCollapsed ? 0 : 1, transitionDelay: '150ms' }}
                   >
                     {route.label}
@@ -157,38 +199,31 @@ export function Sidebar({ className }: SidebarProps) {
 
       <div className="p-3 mt-auto">
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsGetInTouchModalOpen(true)}
           className={cn(
-            "flex flex-col w-full rounded text-sm transition-colors bg-white/10 hover:bg-white/20 text-white text-left overflow-hidden",
-            isCollapsed ? "justify-center py-2.5 px-3" : "p-4"
+            "flex w-full rounded-xl text-[13px] transition-all duration-200",
+            "bg-white/10 hover:bg-white/15 text-white",
+            isCollapsed ? "h-11 items-center justify-center" : "p-4",
           )}
         >
           {isCollapsed ? (
-            <div className="flex items-center justify-center w-5 h-5">
+            <div className="flex items-center justify-center">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
                 <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
           ) : (
-            <div className="flex flex-col w-full space-y-3">
+            <div className="flex flex-col w-full">
               <div className="flex items-center gap-3">
                 <div className="flex-shrink-0 w-5 h-5">
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
                     <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <span 
-                  className="text-base transition-opacity duration-300"
-                  style={{ opacity: isCollapsed ? 0 : 1, transitionDelay: '150ms' }}
-                >
-                  Get in Touch
-                </span>
+                <span className="font-medium">Get in Touch</span>
               </div>
-              <div className="h-px bg-white/10" />
-              <p 
-                className="text-[11px] text-white/70 leading-tight transition-opacity duration-300"
-                style={{ opacity: isCollapsed ? 0 : 1, transitionDelay: '200ms' }}
-              >
+              <div className="h-px bg-white/10 my-3" />
+              <p className="text-[12px] text-white/70 leading-tight text-left">
                 For any non-task related questions, we're here to help
               </p>
             </div>
@@ -197,8 +232,8 @@ export function Sidebar({ className }: SidebarProps) {
       </div>
 
       <GetInTouchModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isGetInTouchModalOpen}
+        onClose={() => setIsGetInTouchModalOpen(false)}
       />
     </div>
   )
