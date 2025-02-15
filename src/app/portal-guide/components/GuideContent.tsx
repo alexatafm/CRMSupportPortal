@@ -29,10 +29,8 @@ export function GuideContent({ activeSection }: GuideContentProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg h-full overflow-y-auto">
-      <div className="p-6">
-        {renderContent()}
-      </div>
+    <div className="p-6">
+      {renderContent()}
     </div>
   )
 } 

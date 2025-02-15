@@ -1,6 +1,20 @@
 import { cn } from "@/lib/utils"
 
-type TicketStatus = "New Request" | "Awaiting Approval" | "In Progress"
+type TicketStatus = 
+  | "New Request"
+  | "Ticket Scoping"
+  | "Awaiting Approval"
+  | "Scope Approved"
+  | "In Progress"
+  | "Awaiting Feedback"
+  | "Completed"
+  | "Abandoned"
+
+type RoleHours = {
+  strategic: number
+  setup: number
+  integration: number
+}
 
 interface SupportTicketCardProps {
   title: string
@@ -10,7 +24,7 @@ interface SupportTicketCardProps {
   date: string
   time: string
   assignee: string
-  scopedHours?: string
+  scopedHours?: RoleHours
 }
 
 export function SupportTicketCard({
@@ -25,29 +39,47 @@ export function SupportTicketCard({
 }: SupportTicketCardProps) {
   const getStatusStyle = (status: TicketStatus) => {
     switch (status) {
+      // Submitted Stage
       case "New Request":
-        return "bg-blue-50 text-blue-600"
+        return "bg-amber-50 text-amber-600 border-amber-200"
+      case "Ticket Scoping":
+        return "bg-blue-50 text-blue-600 border-blue-200"
       case "Awaiting Approval":
-        return "bg-orange-50 text-orange-600"
+        return "bg-purple-50 text-purple-600 border-purple-200"
+      // In Progress Stage
+      case "Scope Approved":
+        return "bg-indigo-50 text-indigo-600 border-indigo-200"
       case "In Progress":
-        return "bg-green-50 text-green-600"
+        return "bg-orange-50 text-orange-600 border-orange-200"
+      case "Awaiting Feedback":
+        return "bg-sky-50 text-sky-600 border-sky-200"
+      // Closed Stage
+      case "Completed":
+        return "bg-emerald-50 text-emerald-600 border-emerald-200"
+      case "Abandoned":
+        return "bg-slate-50 text-slate-600 border-slate-200"
       default:
-        return "bg-gray-50 text-gray-600"
+        return "bg-gray-50 text-gray-600 border-gray-200"
     }
   }
 
   // Format the date and time
   const formattedDateTime = `${date.split(',')[0]}, ${time.split(' ')[0]}`
 
-  const needsScopedHours = status === "New Request" || status === "Awaiting Approval"
+  const needsScopedHours = status === "New Request" || status === "Ticket Scoping"
+
+  const formatHours = (hours: RoleHours) => {
+    const total = hours.strategic + hours.setup + hours.integration
+    return `${total}h`
+  }
 
   return (
-    <div className="group relative bg-white rounded-lg border border-gray-100 hover:shadow-md transition-shadow">
+    <div className="group relative bg-white rounded-lg border border-gray-100 hover:shadow-md transition-shadow cursor-pointer">
       {/* Title Row with Status Badge - Full Width */}
       <div className="flex items-start justify-between gap-3 p-3 pb-0">
         <h3 className="text-[13px] font-medium text-[#1C2B4F] truncate">{title}</h3>
         <div className={cn(
-          "shrink-0 inline-flex px-2 py-0.5 rounded-md text-xs font-medium",
+          "shrink-0 inline-flex px-2 py-0.5 rounded-md text-xs font-medium border",
           getStatusStyle(status)
         )}>
           {status}
@@ -74,31 +106,37 @@ export function SupportTicketCard({
                 </svg>
                 <span className="text-[11px] font-medium">Role Hours TBC</span>
               </div>
-            ) : (
+            ) : scopedHours ? (
               <>
-                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                    <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
-                    <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
-                  <span className="text-[11px] font-medium">2h</span>
-                </div>
-                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                  <span className="text-[11px] font-medium">3h</span>
-                </div>
-                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                    <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
-                    <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <span className="text-[11px] font-medium">1h</span>
-                </div>
+                {scopedHours.strategic > 0 && (
+                  <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="text-[11px] font-medium">{scopedHours.strategic}h</span>
+                  </div>
+                )}
+                {scopedHours.setup > 0 && (
+                  <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="text-[11px] font-medium">{scopedHours.setup}h</span>
+                  </div>
+                )}
+                {scopedHours.integration > 0 && (
+                  <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="text-[11px] font-medium">{scopedHours.integration}h</span>
+                  </div>
+                )}
               </>
-            )}
+            ) : null}
           </div>
         </div>
 

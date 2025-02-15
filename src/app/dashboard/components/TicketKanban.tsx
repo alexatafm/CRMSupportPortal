@@ -1,5 +1,11 @@
 import { SupportTicketCard } from "./SupportTicketCard"
 
+type RoleHours = {
+  strategic: number
+  setup: number
+  integration: number
+}
+
 type KanbanSection = {
   title: string
   count: number
@@ -11,7 +17,7 @@ type KanbanSection = {
     date: string
     time: string
     assignee: string
-    scopedHours?: string
+    scopedHours?: RoleHours
   }[]
 }
 
