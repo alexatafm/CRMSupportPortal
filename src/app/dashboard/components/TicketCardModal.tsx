@@ -80,6 +80,7 @@ export function TicketCardModal({
   const [showRevisionForm, setShowRevisionForm] = useState(false)
   const [showDeclineForm, setShowDeclineForm] = useState(false)
   const [revisionNotes, setRevisionNotes] = useState("")
+  const [isReplyExpanded, setIsReplyExpanded] = useState(false)
 
   const hasInsufficientHours = ticket.scopedHours && ticket.availableHours && (
     ticket.scopedHours.strategic > ticket.availableHours.strategic ||
@@ -162,6 +163,16 @@ export function TicketCardModal({
     onRequestRevisionAction?.(revisionNotes)
     setShowRevisionForm(false)
     setRevisionNotes("")
+  }
+
+  const handleTextareaFocus = () => {
+    setIsReplyExpanded(true)
+  }
+
+  const handleTextareaBlur = () => {
+    if (!replyText.trim()) {
+      setIsReplyExpanded(false)
+    }
   }
 
   const renderApprovedHours = () => (
@@ -350,18 +361,221 @@ export function TicketCardModal({
   const renderTicketScopeContent = () => {
     switch (ticket.status) {
       case "New Request":
+        return (
+          <div className="h-full flex flex-col">
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-3">
+                {/* Strategic Consulting */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">?</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Support & Training */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">?</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Development */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">?</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Alert Message */}
+              <div className="mt-6">
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-start gap-3">
+                    <div className="p-1 rounded-full bg-blue-500">
+                      <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 8v8m0-8v0m0 8v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-blue-700">New Request</h4>
+                      <p className="text-sm text-blue-600 mt-0.5">Your ticket has been submitted.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
       case "Ticket Scoping":
-        return null
+        return (
+          <div className="h-full flex flex-col">
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-3">
+                {/* Strategic Consulting */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">?</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Support & Training */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">?</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Development */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">?</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Alert Message */}
+              <div className="mt-6">
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-start gap-3">
+                    <div className="p-1 rounded-full bg-blue-500">
+                      <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 8v8m0-8v0m0 8v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-blue-700">Ticket Scoping</h4>
+                      <p className="text-sm text-blue-600 mt-0.5">Your ticket request is currently being scoped.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
 
       case "Awaiting Approval":
         return (
           <div className="h-full flex flex-col">
             <div className="flex-1 overflow-y-auto">
-              {renderDetailedScopedHours()}
-              
+              <div className="grid grid-cols-3 gap-3">
+                {/* Strategic Consulting */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Support & Training */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Development */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Estimated Completion Date Section */}
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date</h4>
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date - Updated</h4>
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -371,85 +585,10 @@ export function TicketCardModal({
                     <span>January 15, 2025</span>
                   </div>
                   <p className="text-xs text-blue-600">
-                    This completion date estimate is based on the task being approved within 1 business day of being scoped. This date will be updated again once the task has been approved.
+                    Based on current progress and resource allocation, we expect to complete this task by the date shown above. This estimate accounts for the approved scope and complexity of the work.
                   </p>
                 </div>
               </div>
-            </div>
-
-            <div className="flex-none mt-6">
-              <div className="space-y-3">
-                {hasInsufficientHours ? (
-                  <>
-                    <Button
-                      className="w-full bg-white border border-[#FF4F11] text-[#FF4F11] hover:bg-[#FF4F11]/10"
-                      onClick={() => setShowRevisionForm(true)}
-                    >
-                      Request Reduced Scope Revision
-                    </Button>
-                    <Button
-                      className="w-full bg-[#FF4F11] hover:bg-[#FF4F11]/90 text-white"
-                    >
-                      Purchase Additional Hours
-                    </Button>
-                    <Button
-                      className="w-full bg-white border border-[#FF4F11] text-[#FF4F11] hover:bg-[#FF4F11]/10"
-                    >
-                      Borrow Hours (From Next Month)
-                    </Button>
-                  </>
-                ) : (
-                  <div className="flex gap-3">
-                    <Button
-                      className="flex-1 bg-white border border-[#FF4F11] text-[#FF4F11] hover:bg-[#FF4F11]/10"
-                      onClick={() => setShowRevisionForm(true)}
-                    >
-                      Request Revision
-                    </Button>
-                    <Button
-                      className="flex-1 bg-[#FF4F11] hover:bg-[#FF4F11]/90 text-white"
-                      onClick={() => handleApproveAndClose()}
-                    >
-                      Approve Task Scope
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {showRevisionForm && (
-                <div className="mt-4">
-                  <form onSubmit={handleRevisionSubmit} className="space-y-4">
-                    <div>
-                      <Label htmlFor="revisionNotes" className="text-sm font-medium text-gray-700">
-                        Revision Notes
-                      </Label>
-                      <Textarea
-                        id="revisionNotes"
-                        value={revisionNotes}
-                        onChange={(e) => setRevisionNotes(e.target.value)}
-                        className="mt-1"
-                        placeholder="Please provide details about the required revisions..."
-                        rows={4}
-                      />
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        type="submit"
-                        className="flex-1 bg-[#FF4F11] hover:bg-[#FF4F11]/90 text-white"
-                      >
-                        Submit Revision Request
-                      </Button>
-                      <Button
-                        type="button"
-                        className="flex-1 bg-white border border-[#FF4F11] text-[#FF4F11] hover:bg-[#FF4F11]/10"
-                        onClick={() => setShowRevisionForm(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </form>
-                </div>
-              )}
             </div>
           </div>
         )
@@ -457,24 +596,76 @@ export function TicketCardModal({
       case "In Progress":
         return (
           <div className="h-full flex flex-col">
-            <div className="bg-orange-50 p-4 rounded-lg mb-6">
-              <div className="flex items-start gap-3">
-                <div className="p-1 rounded-full bg-orange-500">
-                  <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 8v8m0-8v0m0 8v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-3">
+                {/* Strategic Consulting */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-orange-700">Task In Progress</h4>
-                  <p className="text-sm text-orange-600 mt-1">
-                    Our team is actively working on your request. You'll receive updates as we make progress.
+
+                {/* CRM Support & Training */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Development */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Estimated Completion Date Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date - Updated</h4>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M3 10h18M16 2v4M8 2v4" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span>January 15, 2025</span>
+                  </div>
+                  <p className="text-xs text-blue-600">
+                    Based on current progress and resource allocation, we expect to complete this task by the date shown above. This estimate accounts for the approved scope and complexity of the work.
                   </p>
                 </div>
               </div>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              {renderApprovedHours()}
             </div>
           </div>
         )
@@ -482,77 +673,76 @@ export function TicketCardModal({
       case "Awaiting Feedback":
         return (
           <div className="h-full flex flex-col">
-            <div className="flex-none bg-yellow-50 p-4 rounded-lg">
-              <div className="flex items-start gap-3">
-                <div className="p-1 rounded-full bg-yellow-500">
-                  <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 8v8m0-8v0m0 8v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-3">
+                {/* Strategic Consulting */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-yellow-700">Awaiting Feedback</h4>
-                  <p className="text-sm text-yellow-600 mt-1">
-                    Please review the completed work and provide your feedback.
+
+                {/* CRM Support & Training */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Development */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Estimated Completion Date Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date - Updated</h4>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M3 10h18M16 2v4M8 2v4" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span>January 15, 2025</span>
+                  </div>
+                  <p className="text-xs text-blue-600">
+                    Based on current progress and resource allocation, we expect to complete this task by the date shown above. This estimate accounts for the approved scope and complexity of the work.
                   </p>
                 </div>
               </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto mt-6">
-              {renderApprovedHours()}
-            </div>
-
-            <div className="flex-none mt-6">
-              <div className="space-y-3">
-                <Button
-                  className="w-full border border-[#FF4F11] text-[#FF4F11] hover:bg-[#FF4F11]/10"
-                  onClick={() => setShowRevisionForm(true)}
-                >
-                  Further Revision Required
-                </Button>
-                <Button
-                  className="w-full bg-[#FF4F11] hover:bg-[#FF4F11]/90 text-white"
-                  onClick={() => handleApproveAndClose()}
-                >
-                  Approve and Close Task
-                </Button>
-              </div>
-
-              {showRevisionForm && (
-                <div className="mt-4">
-                  <form onSubmit={handleRevisionSubmit} className="space-y-4">
-                    <div>
-                      <Label htmlFor="revisionNotes" className="text-sm font-medium text-gray-700">
-                        Revision Notes
-                      </Label>
-                      <Textarea
-                        id="revisionNotes"
-                        value={revisionNotes}
-                        onChange={(e) => setRevisionNotes(e.target.value)}
-                        className="mt-1"
-                        placeholder="Please provide details about the required revisions..."
-                        rows={4}
-                      />
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        type="submit"
-                        className="flex-1 bg-[#FF4F11] hover:bg-[#FF4F11]/90 text-white"
-                      >
-                        Submit Revision Request
-                      </Button>
-                      <Button
-                        type="button"
-                        className="flex-1 border border-[#FF4F11] text-[#FF4F11] hover:bg-[#FF4F11]/10"
-                        onClick={() => setShowRevisionForm(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </form>
-                </div>
-              )}
             </div>
           </div>
         )
@@ -560,23 +750,76 @@ export function TicketCardModal({
       case "Completed":
         return (
           <div className="h-full flex flex-col">
-            <div className="bg-green-50 p-4 rounded-lg mb-6">
-              <div className="flex items-start gap-3">
-                <div className="p-1 rounded-full bg-green-500">
-                  <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-3">
+                {/* Strategic Consulting */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-green-700">Task Completed</h4>
-                  <p className="text-sm text-green-600 mt-1">
-                    This task has been successfully completed and approved.
+
+                {/* CRM Support & Training */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Development */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Estimated Completion Date Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date - Updated</h4>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M3 10h18M16 2v4M8 2v4" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span>January 15, 2025</span>
+                  </div>
+                  <p className="text-xs text-blue-600">
+                    This task has been completed and approved. All work was delivered according to the agreed scope and timeline.
                   </p>
                 </div>
               </div>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              {renderApprovedHours()}
             </div>
           </div>
         )
@@ -584,23 +827,76 @@ export function TicketCardModal({
       case "Abandoned":
         return (
           <div className="h-full flex flex-col">
-            <div className="bg-red-50 p-4 rounded-lg mb-6">
-              <div className="flex items-start gap-3">
-                <div className="p-1 rounded-full bg-red-500">
-                  <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L4 6v12l8 4 8-4V6l-8-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-3">
+                {/* Strategic Consulting */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-red-700">Task Abandoned</h4>
-                  <p className="text-sm text-red-600 mt-1">
-                    This task has been abandoned and will not be completed.
+
+                {/* CRM Support & Training */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CRM Development */}
+                <div className="rounded-lg p-2.5 bg-gray-50">
+                  <div className="flex flex-col items-start gap-1 mb-3">
+                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Estimated Completion Date Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date - Updated</h4>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M3 10h18M16 2v4M8 2v4" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span>January 15, 2025</span>
+                  </div>
+                  <p className="text-xs text-blue-600">
+                    This task has been abandoned and will not be completed. No further updates to the completion date will be provided.
                   </p>
                 </div>
               </div>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              {renderApprovedHours()}
             </div>
           </div>
         )
@@ -638,107 +934,111 @@ export function TicketCardModal({
                 </div>
 
                 {/* Dynamic Status Card - Now on the right */}
-                <div className="w-[400px] flex-none">
+                <div className="flex-none">
                   {(() => {
                     switch (ticket.status) {
                       case "New Request":
+                        return (
+                          <div className="group relative">
+                            <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-amber-50 text-amber-600 text-sm font-medium border border-amber-600">
+                              <span>New Request</span>
+                              <svg className="w-4 h-4 text-amber-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                                <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </div>
+                            <div className="hidden group-hover:block absolute left-0 bottom-full mb-2 w-[300px] p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                              Your ticket has been submitted and will be reviewed by our support team.
+                            </div>
+                          </div>
+                        )
                       case "Ticket Scoping":
                         return (
-                          <div className="bg-blue-50 p-3 rounded-lg">
-                            <div className="flex items-start gap-3">
-                              <div className="p-1 rounded-full bg-blue-500">
-                                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                                  <path d="M12 8v8m0-8v0m0 8v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                                </svg>
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-medium text-blue-700">Ticket Being Scoped</h4>
-                                <p className="text-sm text-blue-600 mt-0.5">Your ticket request is currently being scoped.</p>
-                              </div>
+                          <div className="group relative">
+                            <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-blue-50 text-blue-600 text-sm font-medium border border-blue-600">
+                              <span>Ticket Scoping</span>
+                              <svg className="w-4 h-4 text-blue-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                                <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </div>
+                            <div className="hidden group-hover:block absolute left-0 bottom-full mb-2 w-[300px] p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                              Our team is determining the required hours and resources for your request.
                             </div>
                           </div>
                         )
                       case "Awaiting Approval":
                         return (
-                          <div className="bg-purple-50 p-3 rounded-lg">
-                            <div className="flex items-start gap-3">
-                              <div className="p-1 rounded-full bg-purple-500">
-                                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                                  <path d="M12 8v8m0-8v0m0 8v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                                </svg>
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-medium text-purple-700">Awaiting Your Approval</h4>
-                                <p className="text-sm text-purple-600 mt-0.5">Please review and approve the scoped hours.</p>
-                              </div>
+                          <div className="group relative">
+                            <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-purple-50 text-purple-600 text-sm font-medium border border-purple-600">
+                              <span>Awaiting Approval</span>
+                              <svg className="w-4 h-4 text-purple-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                                <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </div>
+                            <div className="hidden group-hover:block absolute left-0 bottom-full mb-2 w-[300px] p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                              The scope has been prepared and requires your review and approval before work can begin.
                             </div>
                           </div>
                         )
                       case "In Progress":
                         return (
-                          <div className="bg-orange-50 p-3 rounded-lg">
-                            <div className="flex items-start gap-3">
-                              <div className="p-1 rounded-full bg-orange-500">
-                                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                                  <path d="M12 8v8m0-8v0m0 8v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                                </svg>
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-medium text-orange-700">Task In Progress</h4>
-                                <p className="text-sm text-orange-600 mt-0.5">Our team is actively working on your request.</p>
-                              </div>
+                          <div className="group relative">
+                            <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-orange-50 text-orange-600 text-sm font-medium border border-orange-600">
+                              <span>In Progress</span>
+                              <svg className="w-4 h-4 text-orange-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                                <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </div>
+                            <div className="hidden group-hover:block absolute left-0 bottom-full mb-2 w-[300px] p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                              Active work is being performed on your ticket. You'll receive regular progress updates.
                             </div>
                           </div>
                         )
                       case "Awaiting Feedback":
                         return (
-                          <div className="bg-yellow-50 p-3 rounded-lg">
-                            <div className="flex items-start gap-3">
-                              <div className="p-1 rounded-full bg-yellow-500">
-                                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                                  <path d="M12 8v8m0-8v0m0 8v0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                                </svg>
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-medium text-yellow-700">Awaiting Feedback</h4>
-                                <p className="text-sm text-yellow-600 mt-0.5">Please review the completed work and provide your feedback.</p>
-                              </div>
+                          <div className="group relative">
+                            <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-blue-50 text-blue-600 text-sm font-medium border border-blue-600">
+                              <span>Awaiting Feedback</span>
+                              <svg className="w-4 h-4 text-blue-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                                <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </div>
+                            <div className="hidden group-hover:block absolute left-0 bottom-full mb-2 w-[300px] p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                              Please review the completed work and provide feedback or approve for completion.
                             </div>
                           </div>
                         )
                       case "Completed":
                         return (
-                          <div className="bg-green-50 p-3 rounded-lg">
-                            <div className="flex items-start gap-3">
-                              <div className="p-1 rounded-full bg-green-500">
-                                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-medium text-green-700">Task Completed</h4>
-                                <p className="text-sm text-green-600 mt-0.5">This task has been successfully completed and approved.</p>
-                              </div>
+                          <div className="group relative">
+                            <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-green-50 text-green-600 text-sm font-medium border border-green-600">
+                              <span>Completed</span>
+                              <svg className="w-4 h-4 text-green-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                                <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </div>
+                            <div className="hidden group-hover:block absolute left-0 bottom-full mb-2 w-[300px] p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                              The work has been completed and meets all requirements. The ticket is now closed.
                             </div>
                           </div>
                         )
                       case "Abandoned":
                         return (
-                          <div className="bg-red-50 p-3 rounded-lg">
-                            <div className="flex items-start gap-3">
-                              <div className="p-1 rounded-full bg-red-500">
-                                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                                  <path d="M12 2L4 6v12l8 4 8-4V6l-8-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-medium text-red-700">Task Abandoned</h4>
-                                <p className="text-sm text-red-600 mt-0.5">This task has been abandoned and will not be completed.</p>
-                              </div>
+                          <div className="group relative">
+                            <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-gray-50 text-gray-600 text-sm font-medium border border-gray-600">
+                              <span>Abandoned</span>
+                              <svg className="w-4 h-4 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                                <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </div>
+                            <div className="hidden group-hover:block absolute left-0 bottom-full mb-2 w-[300px] p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                              The ticket has been closed without completion at your request or due to other circumstances.
                             </div>
                           </div>
                         )
@@ -973,44 +1273,60 @@ export function TicketCardModal({
 
               {/* Reply Form - Fixed at Bottom */}
               <div className="flex-none pt-4 mt-4 border-t border-gray-100">
-                <textarea
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="Type your reply here..."
-                  className="w-full p-3 rounded-lg border border-gray-200 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-[#0052CC]/20 focus:border-[#0052CC]"
-                  rows={3}
-                />
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="file"
-                      id="file-upload"
-                      multiple
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer text-sm text-[#1C2B4F]"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                      </svg>
-                      Attach Files
-                    </label>
-                    {selectedFiles.length > 0 && (
-                      <span className="text-sm text-[#42526E]">
-                        {selectedFiles.length} file(s) selected
-                      </span>
+                <div className="flex flex-col gap-3">
+                  <textarea
+                    value={replyText}
+                    onChange={(e) => {
+                      setReplyText(e.target.value)
+                      if (e.target.value.trim() && !isReplyExpanded) {
+                        setIsReplyExpanded(true)
+                      }
+                    }}
+                    onFocus={handleTextareaFocus}
+                    onBlur={handleTextareaBlur}
+                    placeholder="Type your reply here..."
+                    className={cn(
+                      "w-full px-4 py-2 rounded-lg border text-sm resize-none",
+                      "focus:outline-none focus:ring-2 focus:ring-[#FF4F11]/20 focus:border-[#FF4F11]",
+                      "border-[#FF4F11] transition-all duration-200",
+                      isReplyExpanded ? "h-[120px]" : "h-[40px]"
                     )}
+                  />
+                  <div className={cn(
+                    "grid grid-cols-2 gap-3",
+                    !isReplyExpanded && "hidden"
+                  )}>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="file-upload"
+                        multiple
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="flex items-center justify-center gap-2 h-[40px] w-full px-3 rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer text-sm text-[#1C2B4F]"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        Attach Files
+                        {selectedFiles.length > 0 && (
+                          <span className="text-[#42526E]">
+                            ({selectedFiles.length})
+                          </span>
+                        )}
+                      </label>
+                    </div>
+                    <button
+                      onClick={handleReplySubmit}
+                      disabled={!replyText.trim() && selectedFiles.length === 0}
+                      className="h-[40px] w-full px-4 bg-[#FF4F11] text-white rounded-lg text-sm font-medium hover:bg-[#FF4F11]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Send Reply
+                    </button>
                   </div>
-                  <button
-                    onClick={handleReplySubmit}
-                    disabled={!replyText.trim() && selectedFiles.length === 0}
-                    className="px-4 py-2 bg-[#FF4F11] text-white rounded-lg text-sm font-medium hover:bg-[#FF4F11]/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Send Reply
-                  </button>
                 </div>
               </div>
             </div>
