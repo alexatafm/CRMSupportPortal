@@ -47,6 +47,9 @@ type TicketCardModalProps = {
     status: TicketStatus
     scopedHours?: RoleHours
     availableHours?: RoleHours
+    approvedBy?: string
+    approvalDate?: string
+    completionDate?: string
   }
   onCloseAction: () => void
   onApproveAction?: () => void
@@ -81,6 +84,8 @@ export function TicketCardModal({
   const [showDeclineForm, setShowDeclineForm] = useState(false)
   const [revisionNotes, setRevisionNotes] = useState("")
   const [isReplyExpanded, setIsReplyExpanded] = useState(false)
+  const [showAddHoursDropdown, setShowAddHoursDropdown] = useState(false)
+  const [showRevisionModal, setShowRevisionModal] = useState(false)
 
   const hasInsufficientHours = ticket.scopedHours && ticket.availableHours && (
     ticket.scopedHours.strategic > ticket.availableHours.strategic ||
@@ -161,7 +166,7 @@ export function TicketCardModal({
   const handleRevisionSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onRequestRevisionAction?.(revisionNotes)
-    setShowRevisionForm(false)
+    setShowRevisionModal(false)
     setRevisionNotes("")
   }
 
@@ -517,57 +522,138 @@ export function TicketCardModal({
         )
 
       case "Awaiting Approval":
+        const hasEnoughHours = (scoped: number = 0, available: number = 0) => available >= scoped;
+        const hasInsufficientHours = !hasEnoughHours(ticket.scopedHours?.strategic, ticket.availableHours?.strategic) ||
+                                   !hasEnoughHours(ticket.scopedHours?.setup, ticket.availableHours?.setup) ||
+                                   !hasEnoughHours(ticket.scopedHours?.integration, ticket.availableHours?.integration);
+
         return (
           <div className="h-full flex flex-col">
             <div className="flex-1 overflow-y-auto">
+              <h3 className="font-medium text-[#1C2B4F] mb-4">Ticket Scope</h3>
               <div className="grid grid-cols-3 gap-3">
                 {/* Strategic Consulting */}
-                <div className="rounded-lg p-2.5 bg-gray-50">
+                <div className={`rounded-lg p-2.5 ${
+                  hasEnoughHours(ticket.scopedHours?.strategic, ticket.availableHours?.strategic)
+                    ? 'bg-blue-50'
+                    : 'bg-red-50'
+                }`}>
                   <div className="flex flex-col items-start gap-1 mb-3">
-                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                    <svg className={`w-5 h-5 ${
+                      hasEnoughHours(ticket.scopedHours?.strategic, ticket.availableHours?.strategic)
+                        ? 'text-blue-600'
+                        : 'text-red-600'
+                    }`} viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
                       <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
                       <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
                     </svg>
-                    <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
+                    <span className={`font-medium text-[10px] ${
+                      hasEnoughHours(ticket.scopedHours?.strategic, ticket.availableHours?.strategic)
+                        ? 'text-blue-600'
+                        : 'text-red-600'
+                    }`}>Strategic Consulting</span>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
                       <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
                     </div>
+                    <div className="h-px bg-gray-200" />
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[#42526E]">Available</span>
+                        <span className="text-xs font-medium text-[#42526E]">{ticket.availableHours?.strategic || 0} hr/s</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[#42526E]">Left Over</span>
+                        <span className="text-xs font-medium text-[#42526E]">
+                          {((ticket.availableHours?.strategic || 0) - (ticket.scopedHours?.strategic || 0))} hr/s
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* CRM Support & Training */}
-                <div className="rounded-lg p-2.5 bg-gray-50">
+                <div className={`rounded-lg p-2.5 ${
+                  hasEnoughHours(ticket.scopedHours?.setup, ticket.availableHours?.setup)
+                    ? 'bg-blue-50'
+                    : 'bg-red-50'
+                }`}>
                   <div className="flex flex-col items-start gap-1 mb-3">
-                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                    <svg className={`w-5 h-5 ${
+                      hasEnoughHours(ticket.scopedHours?.setup, ticket.availableHours?.setup)
+                        ? 'text-blue-600'
+                        : 'text-red-600'
+                    }`} viewBox="0 0 24 24" fill="none">
                       <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                     </svg>
-                    <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
+                    <span className={`font-medium text-[10px] ${
+                      hasEnoughHours(ticket.scopedHours?.setup, ticket.availableHours?.setup)
+                        ? 'text-blue-600'
+                        : 'text-red-600'
+                    }`}>CRM Support & Training</span>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
                       <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
                     </div>
+                    <div className="h-px bg-gray-200" />
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[#42526E]">Available</span>
+                        <span className="text-xs font-medium text-[#42526E]">{ticket.availableHours?.setup || 0} hr/s</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[#42526E]">Left Over</span>
+                        <span className="text-xs font-medium text-[#42526E]">
+                          {((ticket.availableHours?.setup || 0) - (ticket.scopedHours?.setup || 0))} hr/s
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* CRM Development */}
-                <div className="rounded-lg p-2.5 bg-gray-50">
+                <div className={`rounded-lg p-2.5 ${
+                  hasEnoughHours(ticket.scopedHours?.integration, ticket.availableHours?.integration)
+                    ? 'bg-blue-50'
+                    : 'bg-red-50'
+                }`}>
                   <div className="flex flex-col items-start gap-1 mb-3">
-                    <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+                    <svg className={`w-5 h-5 ${
+                      hasEnoughHours(ticket.scopedHours?.integration, ticket.availableHours?.integration)
+                        ? 'text-blue-600'
+                        : 'text-red-600'
+                    }`} viewBox="0 0 24 24" fill="none">
                       <path d="M4 5C4 4.44772 4.44772 4 5 4H19C19.5523 4 20 4.44772 20 5V19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5Z" stroke="currentColor" strokeWidth="2"/>
                       <path d="M7 8L11 12L7 16M13 16H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
+                    <span className={`font-medium text-[10px] ${
+                      hasEnoughHours(ticket.scopedHours?.integration, ticket.availableHours?.integration)
+                        ? 'text-blue-600'
+                        : 'text-red-600'
+                    }`}>CRM Development</span>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
                       <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
+                    </div>
+                    <div className="h-px bg-gray-200" />
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[#42526E]">Available</span>
+                        <span className="text-xs font-medium text-[#42526E]">{ticket.availableHours?.integration || 0} hr/s</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[#42526E]">Left Over</span>
+                        <span className="text-xs font-medium text-[#42526E]">
+                          {((ticket.availableHours?.integration || 0) - (ticket.scopedHours?.integration || 0))} hr/s
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -588,6 +674,99 @@ export function TicketCardModal({
                     Based on current progress and resource allocation, we expect to complete this task by the date shown above. This estimate accounts for the approved scope and complexity of the work.
                   </p>
                 </div>
+              </div>
+
+              {/* Fileroom Scope Details */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Fileroom Scope Details</h4>
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm text-[#42526E]">
+                    {ticket.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Revision Form */}
+              {showRevisionForm && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <form onSubmit={handleRevisionSubmit}>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="revisionNotes">Revision Notes</Label>
+                        <Textarea
+                          id="revisionNotes"
+                          value={revisionNotes}
+                          onChange={(e) => setRevisionNotes(e.target.value)}
+                          placeholder="Please provide details about the required revisions..."
+                          className="mt-1.5"
+                          rows={4}
+                        />
+                      </div>
+                      <div className="flex justify-end gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setShowRevisionForm(false)}
+                          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={!revisionNotes.trim()}
+                          className="px-4 py-2 text-sm font-medium text-white bg-[#FF4F11] rounded-md hover:bg-[#FF4F11]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Submit Revision Request
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button 
+                onClick={() => setShowRevisionModal(true)}
+                className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Request Revision
+              </button>
+              <div className="relative">
+                <button 
+                  onClick={() => setShowAddHoursDropdown(!showAddHoursDropdown)}
+                  className="w-full px-4 py-2 text-sm font-medium text-white bg-[#FF4F11] rounded-md hover:bg-[#FF4F11]/90"
+                >
+                  Add Hours
+                </button>
+                {showAddHoursDropdown && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-[10000]" 
+                      onClick={() => setShowAddHoursDropdown(false)}
+                    />
+                    <div className="absolute bottom-full right-0 mb-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-[10001]">
+                      <button 
+                        onClick={() => {
+                          // Handle purchase hours
+                          setShowAddHoursDropdown(false)
+                        }}
+                        className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 rounded-md"
+                      >
+                        Purchase Add-On Hours
+                      </button>
+                      <button 
+                        onClick={() => {
+                          // Handle borrow hours
+                          setShowAddHoursDropdown(false)
+                        }}
+                        className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 rounded-md"
+                      >
+                        Borrow Hours from Next Month
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -597,6 +776,13 @@ export function TicketCardModal({
         return (
           <div className="h-full flex flex-col">
             <div className="flex-1 overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-[#1C2B4F]">Ticket Scope</h3>
+                <span className="text-sm text-gray-500">
+                  Approved by {ticket.approvedBy} on {ticket.approvalDate}
+                </span>
+              </div>
+
               <div className="grid grid-cols-3 gap-3">
                 {/* Strategic Consulting */}
                 <div className="rounded-lg p-2.5 bg-gray-50">
@@ -608,11 +794,9 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
                   </div>
                 </div>
 
@@ -624,11 +808,9 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
                   </div>
                 </div>
 
@@ -641,18 +823,16 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
                   </div>
                 </div>
               </div>
 
               {/* Estimated Completion Date Section */}
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date - Updated</h4>
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date</h4>
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -666,6 +846,32 @@ export function TicketCardModal({
                   </p>
                 </div>
               </div>
+
+              {/* Fileroom Scope Details */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Fileroom Scope Details</h4>
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm text-[#42526E]">
+                    {ticket.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-6 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowRevisionModal(true)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Revision Required
+              </button>
+              <button 
+                onClick={handleApproveAndClose}
+                className="px-4 py-2 text-sm font-medium text-white bg-[#FF4F11] rounded-md hover:bg-[#FF4F11]/90"
+              >
+                Approve & Close
+              </button>
             </div>
           </div>
         )
@@ -674,6 +880,13 @@ export function TicketCardModal({
         return (
           <div className="h-full flex flex-col">
             <div className="flex-1 overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-[#1C2B4F]">Ticket Scope</h3>
+                <span className="text-sm text-gray-500">
+                  Approved by {ticket.approvedBy} on {ticket.approvalDate}
+                </span>
+              </div>
+
               <div className="grid grid-cols-3 gap-3">
                 {/* Strategic Consulting */}
                 <div className="rounded-lg p-2.5 bg-gray-50">
@@ -685,11 +898,9 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
                   </div>
                 </div>
 
@@ -701,11 +912,9 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
                   </div>
                 </div>
 
@@ -718,18 +927,16 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
                   </div>
                 </div>
               </div>
 
               {/* Estimated Completion Date Section */}
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date - Updated</h4>
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date</h4>
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -743,6 +950,32 @@ export function TicketCardModal({
                   </p>
                 </div>
               </div>
+
+              {/* Fileroom Scope Details */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Fileroom Scope Details</h4>
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm text-[#42526E]">
+                    {ticket.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-6 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowRevisionModal(true)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Revision Required
+              </button>
+              <button 
+                onClick={handleApproveAndClose}
+                className="px-4 py-2 text-sm font-medium text-white bg-[#FF4F11] rounded-md hover:bg-[#FF4F11]/90"
+              >
+                Approve & Close
+              </button>
             </div>
           </div>
         )
@@ -751,6 +984,13 @@ export function TicketCardModal({
         return (
           <div className="h-full flex flex-col">
             <div className="flex-1 overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-[#1C2B4F]">Ticket Scope</h3>
+                <span className="text-sm text-gray-500">
+                  Completed on {ticket.completionDate} • Approved by {ticket.approvedBy}
+                </span>
+              </div>
+
               <div className="grid grid-cols-3 gap-3">
                 {/* Strategic Consulting */}
                 <div className="rounded-lg p-2.5 bg-gray-50">
@@ -762,11 +1002,9 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">Strategic Consulting</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.strategic || 0} hr/s</span>
                   </div>
                 </div>
 
@@ -778,11 +1016,9 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">CRM Support & Training</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.setup || 0} hr/s</span>
                   </div>
                 </div>
 
@@ -795,28 +1031,19 @@ export function TicketCardModal({
                     </svg>
                     <span className="font-medium text-[10px] text-gray-600">CRM Development</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
-                      <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#42526E]">Scoped</span>
+                    <span className="text-sm font-semibold text-[#42526E]">{ticket.scopedHours?.integration || 0} hr/s</span>
                   </div>
                 </div>
               </div>
 
-              {/* Estimated Completion Date Section */}
+              {/* Fileroom Scope Details */}
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Estimated Completion Date - Updated</h4>
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M3 10h18M16 2v4M8 2v4" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                    <span>January 15, 2025</span>
-                  </div>
-                  <p className="text-xs text-blue-600">
-                    This task has been completed and approved. All work was delivered according to the agreed scope and timeline.
+                <h4 className="text-sm font-medium text-[#1C2B4F] mb-2">Fileroom Scope Details</h4>
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm text-[#42526E]">
+                    {ticket.description}
                   </p>
                 </div>
               </div>
@@ -1341,6 +1568,53 @@ export function TicketCardModal({
           </div>
         </div>
       </div>
+
+      {/* Revision Request Modal */}
+      {showRevisionModal && (
+        <div className="fixed inset-0 z-[10002] flex items-center justify-center">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowRevisionModal(false)}
+          />
+          <div className="relative bg-white rounded-lg shadow-lg w-[500px] p-6">
+            <h3 className="text-lg font-medium text-[#1C2B4F] mb-4">Request Revision</h3>
+            <form onSubmit={handleRevisionSubmit}>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="revisionNotes">Revision Notes</Label>
+                  <Textarea
+                    id="revisionNotes"
+                    value={revisionNotes}
+                    onChange={(e) => setRevisionNotes(e.target.value)}
+                    placeholder="Please provide details about the required revisions..."
+                    className="mt-1.5"
+                    rows={4}
+                  />
+                </div>
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowRevisionModal(false)
+                      setRevisionNotes("")
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!revisionNotes.trim()}
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#FF4F11] rounded-md hover:bg-[#FF4F11]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Submit Revision Request
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   )
 
