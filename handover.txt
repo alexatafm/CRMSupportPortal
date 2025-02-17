@@ -1,0 +1,638 @@
+==========================================================================
+                    CRM SUPPORT PORTAL - BACKEND HANDOVER
+==========================================================================
+
+TABLE OF CONTENTS
+----------------
+1. System Architecture Overview
+2. Integration Requirements
+3. tRPC API Structure
+4. Security Requirements
+5. Caching Strategy
+6. Error Handling
+7. Testing Requirements
+8. Monitoring and Logging
+9. Deployment Considerations
+10. Performance Requirements
+11. Development Guidelines
+12. Maintenance Considerations
+
+==========================================================================
+1. SYSTEM ARCHITECTURE OVERVIEW
+==========================================================================
+
+PRIMARY DATA SOURCE: HUBSPOT
+---------------------------
+HubSpot serves as the primary database and source of truth for:
+- User data (contacts and companies)
+- Ticket management and workflows
+- Email communications
+- Forms and form submissions
+- Pre-built catalogue (existing HubDB)
+- Payment and subscription plans (HubSpot Commerce Hub + Stripe)
+
+SECONDARY DATABASE (POSTGRESQL + PRISMA)
+--------------------------------------
+Purpose: Store supplementary data and maintain application state not handled by HubSpot
+
+Required Schema Components:
+
+```prisma
+// Core User Management
+model User {
+    id            String       @id @default(cuid())
+    hubspotId     String       @unique  // Link to HubSpot contact
+    email         String       @unique
+    role          UserRole
+    permissions   Permission[]
+    lastLogin     DateTime?
+    sessions      Session[]
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+    company       Company?     @relation(fields: [companyId], references: [id])
+    companyId     String?
+}
+
+model Company {
+    id            String       @id @default(cuid())
+    hubspotId     String       @unique  // Link to HubSpot company
+    name          String
+    users         User[]
+    planType      PlanType
+    planStatus    PlanStatus
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+}
+
+model Session {
+    id           String       @id @default(cuid())
+    userId       String
+    user         User         @relation(fields: [userId], references: [id])
+    token        String       @unique
+    activeUntil  DateTime
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+}
+
+// Caching and State Management
+model LocalCache {
+    id           String       @id @default(cuid())
+    type         String       // e.g., "ticket_draft", "form_state"
+    key          String       // Cache key for lookup
+    data         Json
+    expiresAt    DateTime
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+
+    @@unique([type, key])
+}
+
+// Audit Logging
+model AuditLog {
+    id           String       @id @default(cuid())
+    userId       String
+    action       String
+    entityType   String
+    entityId     String
+    changes      Json?
+    metadata     Json?
+    createdAt    DateTime     @default(now())
+}
+
+// Enums
+enum UserRole {
+    ADMIN
+    MANAGER
+    USER
+}
+
+enum PlanType {
+    BASIC
+    PROFESSIONAL
+    ENTERPRISE
+    CUSTOM
+}
+
+enum PlanStatus {
+    ACTIVE
+    SUSPENDED
+    CANCELLED
+    TRIAL
+}
+
+model Permission {
+    id           String       @id @default(cuid())
+    name         String       @unique
+    description  String?
+    users        User[]
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+}
+```
+
+==========================================================================
+2. INTEGRATION REQUIREMENTS
+==========================================================================
+
+A. HUBSPOT INTEGRATION
+---------------------
+1. API Setup
+   - Implement HubSpot client with rate limiting and retry logic
+   - Configure webhook listeners for real-time updates
+   - Implement intelligent caching system
+
+   ```typescript
+   interface HubSpotConfig {
+     apiKey: string;
+     maxRetries: number;
+     rateLimit: {
+       maxRequests: number;
+       windowMs: number;
+     };
+     webhook: {
+       secret: string;
+       endpoints: {
+         tickets: string;
+         contacts: string;
+         companies: string;
+       };
+     };
+   }
+   ```
+
+2. Data Synchronization
+   - Implement bi-directional sync between HubSpot and local database
+   - Handle conflict resolution
+   - Maintain audit logs
+
+   ```typescript
+   interface SyncConfig {
+     entities: ('contacts' | 'companies' | 'tickets' | 'forms')[];
+     frequency: number;
+     priority: 'high' | 'medium' | 'low';
+     conflictResolution: 'hubspot' | 'local' | 'manual';
+     retryStrategy: {
+       maxAttempts: number;
+       backoffMs: number;
+     };
+   }
+   ```
+
+B. SENDGRID INTEGRATION
+----------------------
+1. Email Communications Setup
+   - Configure transactional email templates
+   - Implement email tracking and analytics
+   - Handle bounce and spam reports
+   - Set up email queuing system
+
+   ```typescript
+   interface EmailConfig {
+     apiKey: string;
+     templates: {
+       verification: string;
+       passwordReset: string;
+       ticketUpdate: string;
+       welcomeEmail: string;
+     };
+     from: {
+       email: string;
+       name: string;
+     };
+     tracking: {
+       clicks: boolean;
+       opens: boolean;
+       subscriptionManagement: boolean;
+     };
+   }
+   ```
+
+2. Authentication Flow
+   - Email verification process
+   - Password reset workflow
+   - Account notifications
+   - Session management
+
+C. FORM INTEGRATION
+------------------
+1. HubSpot Forms Integration
+   - Create middleware for form submissions
+   - Implement client-side and server-side validation
+   - Handle file uploads with proper validation and virus scanning
+   - Implement form analytics
+
+   ```typescript
+   interface FormConfig {
+     hubspotPortalId: string;
+     maxFileSize: number;
+     allowedFileTypes: string[];
+     validation: {
+       rules: Record<string, ValidationRule>;
+       customValidators: Record<string, ValidatorFn>;
+     };
+     analytics: {
+       enabled: boolean;
+       trackFields: string[];
+     };
+   }
+   ```
+
+==========================================================================
+3. TRPC API STRUCTURE
+==========================================================================
+
+Base Router Configuration:
+```typescript
+import { router } from '@trpc/server';
+import { z } from 'zod';
+
+const appRouter = router({
+  auth: authRouter,
+  tickets: ticketRouter,
+  users: userRouter,
+  forms: formRouter,
+  catalogue: catalogueRouter,
+  subscriptions: subscriptionRouter,
+});
+
+// Authentication Router
+const authRouter = router({
+  login: publicProcedure
+    .input(loginSchema)
+    .mutation(async ({ input, ctx }) => {
+      // Implement login logic
+    }),
+  logout: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      // Implement logout logic
+    }),
+  // Other auth procedures...
+});
+
+// Ticket Router
+const ticketRouter = router({
+  create: protectedProcedure
+    .input(ticketSchema)
+    .mutation(async ({ input, ctx }) => {
+      // Create ticket in HubSpot
+      // Update local cache
+      // Send notifications
+    }),
+  update: protectedProcedure
+    .input(updateTicketSchema)
+    .mutation(async ({ input, ctx }) => {
+      // Update ticket
+    }),
+  list: protectedProcedure
+    .input(ticketFilterSchema)
+    .query(async ({ input, ctx }) => {
+      // List tickets with filtering
+    }),
+  // Other ticket procedures...
+});
+
+// Input Validation Schemas
+const ticketSchema = z.object({
+  title: z.string().min(1).max(100),
+  description: z.string().min(1),
+  supportArea: z.array(z.string()),
+  supportCategory: z.array(z.string()),
+  files: z.array(z.object({
+    name: z.string(),
+    content: z.string(),
+    type: z.string(),
+  })).optional(),
+});
+```
+
+==========================================================================
+4. SECURITY REQUIREMENTS
+==========================================================================
+
+A. AUTHENTICATION
+----------------
+1. JWT Implementation
+   - Use secure JWT configuration
+   - Implement refresh token rotation
+   - Set up proper token expiration
+
+   ```typescript
+   interface JWTConfig {
+     secret: string;
+     expiresIn: string;
+     refreshToken: {
+       secret: string;
+       expiresIn: string;
+     };
+     cookie: {
+       secure: boolean;
+       sameSite: 'strict' | 'lax' | 'none';
+       maxAge: number;
+     };
+   }
+   ```
+
+2. Session Management
+   - Implement secure session handling
+   - Set up session invalidation
+   - Handle concurrent sessions
+
+B. AUTHORIZATION
+---------------
+1. Role-Based Access Control (RBAC)
+   - Implement fine-grained permissions
+   - Set up role hierarchy
+   - Handle permission inheritance
+
+2. Data Access Control
+   - Implement row-level security
+   - Set up data isolation between companies
+   - Handle cross-company data sharing
+
+C. DATA PROTECTION
+-----------------
+1. Encryption
+   - Implement at-rest encryption
+   - Set up in-transit encryption
+   - Handle key rotation
+
+2. Rate Limiting
+   - Implement API rate limiting
+   - Set up DDoS protection
+   - Handle burst traffic
+
+==========================================================================
+5. CACHING STRATEGY
+==========================================================================
+
+A. CACHING CONFIGURATION
+-----------------------
+```typescript
+interface CacheConfig {
+  type: 'memory' | 'redis';
+  ttl: number;
+  invalidationRules: {
+    on: string[];
+    action: 'clear' | 'update';
+  }[];
+  redis?: {
+    host: string;
+    port: number;
+    password: string;
+    tls: boolean;
+  };
+}
+```
+
+B. CACHE LAYERS
+--------------
+1. Application Cache
+   - Frequently accessed HubSpot data
+   - User sessions
+   - Form states
+   - API responses
+
+2. Redis Cache
+   - Distributed caching
+   - Rate limiting
+   - Session management
+   - Real-time updates
+
+==========================================================================
+6. ERROR HANDLING
+==========================================================================
+
+A. ERROR TYPES
+-------------
+```typescript
+interface AppError extends Error {
+  code: string;
+  status: number;
+  context?: Record<string, unknown>;
+  userMessage?: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+}
+
+// Error Handling Middleware
+const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Log error
+  // Send appropriate response
+  // Trigger alerts if necessary
+};
+```
+
+B. ERROR REPORTING
+-----------------
+1. Setup Requirements
+   - Configure Sentry integration
+   - Implement error boundaries
+   - Set up error logging system
+
+2. Monitoring
+   - Real-time error tracking
+   - Error analytics
+   - Alert thresholds
+
+==========================================================================
+7. TESTING REQUIREMENTS
+==========================================================================
+
+A. UNIT TESTS
+------------
+1. Coverage Requirements
+   - Minimum 80% code coverage
+   - Critical path coverage
+   - Edge case testing
+
+2. Test Types
+   - API endpoint tests
+   - Data validation tests
+   - Business logic tests
+   - Integration tests
+
+B. INTEGRATION TESTS
+------------------
+1. External Services
+   - HubSpot API integration
+   - SendGrid integration
+   - Form submissions
+   - Payment processing
+
+2. End-to-End Tests
+   - User workflows
+   - Critical business processes
+   - Performance tests
+
+==========================================================================
+8. MONITORING AND LOGGING
+==========================================================================
+
+A. METRICS
+---------
+1. Performance Metrics
+   - API response times
+   - Database query times
+   - Cache hit/miss rates
+   - External API latency
+
+2. Business Metrics
+   - User activity
+   - Error rates
+   - Feature usage
+   - Conversion rates
+
+B. LOGGING
+---------
+1. Log Types
+   - Application logs
+   - Access logs
+   - Error logs
+   - Audit logs
+   - Performance logs
+
+2. Log Management
+   - Log rotation
+   - Log retention
+   - Log analysis
+   - Alert configuration
+
+==========================================================================
+9. DEPLOYMENT CONSIDERATIONS
+==========================================================================
+
+A. ENVIRONMENT CONFIGURATION
+--------------------------
+```typescript
+interface EnvConfig {
+  // API Keys
+  HUBSPOT_API_KEY: string;
+  SENDGRID_API_KEY: string;
+  
+  // Database
+  DATABASE_URL: string;
+  REDIS_URL?: string;
+  
+  // Authentication
+  JWT_SECRET: string;
+  REFRESH_TOKEN_SECRET: string;
+  
+  // Services
+  NODE_ENV: 'development' | 'staging' | 'production';
+  PORT: number;
+  
+  // Monitoring
+  SENTRY_DSN?: string;
+  LOG_LEVEL: string;
+  
+  // Feature Flags
+  ENABLE_CACHE: boolean;
+  ENABLE_RATE_LIMITING: boolean;
+}
+```
+
+B. CI/CD PIPELINE
+---------------
+1. Build Process
+   - Automated testing
+   - Code quality checks
+   - Security scanning
+   - Database migrations
+
+2. Deployment Process
+   - Zero-downtime deployments
+   - Rollback capability
+   - Environment validation
+   - Health checks
+
+==========================================================================
+10. PERFORMANCE REQUIREMENTS
+==========================================================================
+
+A. RESPONSE TIMES
+---------------
+1. API Endpoints
+   - REST endpoints: < 200ms
+   - GraphQL queries: < 300ms
+   - Form submissions: < 500ms
+   - File uploads: < 2000ms
+
+2. Cache Performance
+   - Cache read: < 50ms
+   - Cache write: < 100ms
+
+B. SCALABILITY
+------------
+1. Infrastructure
+   - Horizontal scaling capability
+   - Load balancing configuration
+   - Auto-scaling rules
+
+2. Application
+   - Connection pooling
+   - Query optimization
+   - Resource management
+
+==========================================================================
+11. DEVELOPMENT GUIDELINES
+==========================================================================
+
+A. CODE STANDARDS
+---------------
+1. TypeScript
+   - Strict type checking
+   - Interface-first development
+   - Documentation requirements
+
+2. API Design
+   - RESTful principles
+   - Error handling
+   - Validation
+
+B. DOCUMENTATION
+--------------
+1. Code Documentation
+   - JSDoc comments
+   - Type definitions
+   - Example usage
+
+2. API Documentation
+   - OpenAPI/Swagger
+   - Integration guides
+   - Troubleshooting guides
+
+==========================================================================
+12. MAINTENANCE CONSIDERATIONS
+==========================================================================
+
+A. BACKUP STRATEGY
+----------------
+1. Database Backups
+   - Frequency: Daily
+   - Retention: 30 days
+   - Verification process
+
+2. Application State
+   - Cache backup
+   - Session management
+   - File storage
+
+B. MONITORING
+-----------
+1. System Health
+   - Resource utilization
+   - Error rates
+   - Performance metrics
+
+2. Business Metrics
+   - User engagement
+   - Feature usage
+   - Support tickets
+
+==========================================================================
+                               END OF DOCUMENT
+========================================================================== 
